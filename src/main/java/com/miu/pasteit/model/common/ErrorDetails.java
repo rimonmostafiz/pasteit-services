@@ -1,0 +1,38 @@
+package com.miu.pasteit.model.common;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
+
+/**
+ * @author Rimon Mostafiz
+ */
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ErrorDetails {
+
+    private String field;
+
+    private String message;
+
+    private String dataTab;
+
+    public ErrorDetails() {
+    }
+
+    public ErrorDetails(String message) {
+        this.message = message;
+    }
+
+    public ErrorDetails(String field, String message) {
+        this.field = field;
+        this.message = message;
+    }
+
+    public ErrorDetails(String dataTab, String field, String message) {
+        this.dataTab = dataTab;
+        this.field = field;
+        this.message = message;
+    }
+}

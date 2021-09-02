@@ -1,4 +1,4 @@
-package com.mpp.gryffindor.pasteit;
+package com.miu.pasteit;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
