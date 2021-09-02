@@ -7,12 +7,13 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.miu.pasteit.utils.ValidationConstants.*;
 import static com.miu.pasteit.utils.ValidationConstants.*;
 
 /**

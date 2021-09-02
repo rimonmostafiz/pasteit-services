@@ -6,13 +6,14 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import static com.miu.pasteit.utils.ValidationConstants.ALPHANUMERIC_UNDERSCORE_DOT;
 import static com.miu.pasteit.utils.ValidationConstants.ROLE_MAX_SIZE;
+
 /**
  * @author Rimon Mostafiz
  */
