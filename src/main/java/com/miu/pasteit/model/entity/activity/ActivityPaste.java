@@ -2,6 +2,7 @@ package com.miu.pasteit.model.entity.activity;
 
 import com.miu.pasteit.model.entity.common.ActivityAction;
 import com.miu.pasteit.model.entity.common.ActivityCommon;
+import com.miu.pasteit.model.entity.common.Language;
 import com.miu.pasteit.model.entity.common.PasteStatus;
 import com.miu.pasteit.model.entity.db.Paste;
 import lombok.Data;
@@ -28,14 +29,31 @@ public class ActivityPaste extends ActivityCommon {
     //pasteId
     private String id;
 
+    private String content;
+
+    private String contentHash;
+
+    private String title;
+
+    private String url;
+
     private String description;
 
     @Enumerated(EnumType.STRING)
     private PasteStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private Language language;
+
+    private String folder;
+
+    private Long validity;
+
     private String pasteUser;
 
     private LocalDateTime pasteDateTime;
+
+    private String share;
 
     private static ActivityPaste of(Paste entity) {
         ActivityPaste activity = new ActivityPaste();

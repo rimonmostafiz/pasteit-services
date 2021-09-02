@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 /**
@@ -31,6 +33,8 @@ public class Paste extends EntityCommon {
 
     private String title;
 
+    private String url;
+
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -47,4 +51,6 @@ public class Paste extends EntityCommon {
     private User pasteUser;
 
     private LocalDateTime pasteDateTime;
+
+    private String share;
 }
