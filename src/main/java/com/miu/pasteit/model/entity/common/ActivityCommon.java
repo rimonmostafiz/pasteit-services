@@ -24,8 +24,6 @@ public abstract class ActivityCommon extends EntityCommon implements Serializabl
 
     protected LocalDateTime activityTime;
 
-    protected Long version;
-
     public static void mapper(ActivityCommon activity, String activityUser, ActivityAction activityAction) {
         activity.setActivityUser(activityUser);
         activity.setActivityAction(activityAction.getAction());
