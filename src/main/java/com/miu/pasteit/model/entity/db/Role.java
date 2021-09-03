@@ -1,6 +1,7 @@
 package com.miu.pasteit.model.entity.db;
 
 import com.miu.pasteit.model.entity.common.EntityCommon;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -17,9 +18,10 @@ import static com.miu.pasteit.utils.ValidationConstants.ROLE_MAX_SIZE;
 /**
  * @author Rimon Mostafiz
  */
+@Data
 @NoArgsConstructor
 @Document("ROLE")
-@Data(staticConstructor = "of")
+@AllArgsConstructor(staticName = "of")
 @EqualsAndHashCode(callSuper = true)
 public class Role extends EntityCommon {
     @Id
