@@ -2,6 +2,7 @@ package com.miu.pasteit.model.entity.db;
 
 import com.miu.pasteit.model.entity.common.EntityCommon;
 import com.miu.pasteit.model.entity.common.Status;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,9 +20,10 @@ import static com.miu.pasteit.utils.ValidationConstants.*;
 /**
  * @author Rimon Mostafiz
  */
+@Data
 @NoArgsConstructor
 @Document("USER")
-@Data(staticConstructor = "of")
+@AllArgsConstructor(staticName = "of")
 @EqualsAndHashCode(callSuper = true)
 public class User extends EntityCommon {
     @Id

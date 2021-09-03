@@ -1,6 +1,7 @@
 package com.miu.pasteit.model.entity.db;
 
 import com.miu.pasteit.model.entity.common.EntityCommon;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -10,9 +11,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 /**
  * @author Rimon Mostafiz
  */
+@Data
 @NoArgsConstructor
 @Document("USER_ROLES")
-@Data(staticConstructor = "of")
+@AllArgsConstructor(staticName = "of")
 @EqualsAndHashCode(callSuper = true)
 public class UserRoles extends EntityCommon {
     @Id

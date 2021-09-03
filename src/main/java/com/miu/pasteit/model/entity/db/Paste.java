@@ -3,10 +3,7 @@ package com.miu.pasteit.model.entity.db;
 import com.miu.pasteit.model.entity.common.EntityCommon;
 import com.miu.pasteit.model.entity.common.Language;
 import com.miu.pasteit.model.entity.common.PasteStatus;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,10 +15,11 @@ import java.time.LocalDateTime;
  * @author Rimon Mostafiz
  */
 
+@Data
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @Document("PASTE")
-@Data(staticConstructor = "of")
 @EqualsAndHashCode(callSuper = true)
 public class Paste extends EntityCommon {
     @Id
