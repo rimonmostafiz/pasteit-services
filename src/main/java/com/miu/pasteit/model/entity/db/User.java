@@ -5,11 +5,11 @@ import com.miu.pasteit.model.entity.common.Status;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Id;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
