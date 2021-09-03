@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,9 +17,6 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @AttributeOverride(name = "version", column = @Column(name = "INTERNAL_VERSION"))
 public abstract class ActivityCommon extends EntityCommon implements Serializable {
-
-    @Id
-    protected String activityId;
 
     protected String activityUser;
 
