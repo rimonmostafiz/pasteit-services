@@ -18,8 +18,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableConfigurationProperties
 public class PasteItApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(PasteItApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(PasteItApplication.class, args);
+    }
 
 }

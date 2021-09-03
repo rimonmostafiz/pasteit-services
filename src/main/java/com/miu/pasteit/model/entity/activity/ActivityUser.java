@@ -7,17 +7,19 @@ import com.miu.pasteit.model.entity.db.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 
 
 /**
  * @author Rimon Mostafiz
  */
 @Data
-@Entity
 @NoArgsConstructor
-@Table(name = "ACTIVITY_USER")
+@Document("ACTIVITY_USER")
 @EqualsAndHashCode(callSuper = true)
 public class ActivityUser extends ActivityCommon {
 

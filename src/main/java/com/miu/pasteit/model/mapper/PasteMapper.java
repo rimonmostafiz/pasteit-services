@@ -1,6 +1,7 @@
 package com.miu.pasteit.model.mapper;
 
 import com.miu.pasteit.model.dto.PasteModel;
+import com.miu.pasteit.model.entity.common.Language;
 import com.miu.pasteit.model.entity.common.PasteStatus;
 import com.miu.pasteit.model.entity.db.Paste;
 import com.miu.pasteit.model.entity.db.User;
@@ -17,8 +18,13 @@ public class PasteMapper {
     public static PasteModel mapper(Paste entity) {
         PasteModel model = new PasteModel();
         model.setId(entity.getId());
+        model.setContent(entity.getContent());
+        model.setTitle(entity.getTitle());
+        model.setUrl(entity.getUrl());
         model.setDescription(entity.getDescription());
         model.setStatus(entity.getStatus());
+        model.setLanguage(entity.getLanguage());
+        model.setFolder(entity.getFolder());
         model.setPasteUser(UserMapper.mapperForInternal(entity.getPasteUser()));
         model.setPasteDateTime(entity.getPasteDateTime());
         return model;
@@ -27,9 +33,13 @@ public class PasteMapper {
     public static Paste createRequestToEntity(PasteCreateRequest pasteCreateRequest, String createdBy, User user) {
         Paste entity = new Paste();
 
+        entity.setContent(pasteCreateRequest.getContent());
+        entity.setTitle(pasteCreateRequest.getTitle());
         entity.setDescription(pasteCreateRequest.getDescription());
         entity.setStatus(PasteStatus.getStatus(pasteCreateRequest.getStatus()));
+        entity.setLanguage(Language.getLanguage(pasteCreateRequest.getLanguage()));
         entity.setPasteUser(user);
+        entity.setFolder(pasteCreateRequest.getFolder());
         entity.setPasteDateTime(LocalDateTime.now());
 
         entity.setCreatedBy(createdBy);
