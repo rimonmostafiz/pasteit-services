@@ -2,10 +2,7 @@ package com.miu.pasteit.model.entity.db;
 
 import com.miu.pasteit.model.entity.common.EntityCommon;
 import com.miu.pasteit.model.entity.common.Status;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

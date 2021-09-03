@@ -12,5 +12,5 @@
 ## Commands
 
 ```
-docker compose -f docker-compose.yaml -d
+docker-compose -f docker-compose.yaml up
 ```

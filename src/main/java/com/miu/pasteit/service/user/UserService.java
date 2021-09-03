@@ -12,8 +12,10 @@ import com.miu.pasteit.repository.UserRepository;
 import com.miu.pasteit.repository.activity.ActivityUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +44,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final ActivityUserRepository activityUserRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     public User createUser(UserCreateRequest userCreateRequest, String requestUser) {
-        User user = UserMapper.mapUserCreateRequest(userCreateRequest, requestUser, passwordEncoder);
+        User user = UserMapper.mapUserCreateRequest(userCreateRequest, requestUser, bCryptPasswordEncoder.encode(userCreateRequest.getPassword()));
         User savedUser = userRepository.save(user);
 
         ActivityUser activityUser = ActivityUser.of(savedUser, requestUser, ActivityAction.INSERT);
