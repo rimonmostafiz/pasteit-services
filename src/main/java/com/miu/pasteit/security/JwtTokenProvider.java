@@ -6,8 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import com.miu.pasteit.service.user.UserDetailsServiceImpl;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -17,74 +19,84 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
 
+import static com.miu.pasteit.security.SecurityUtils.getUserNamePasswordAuthenticationToken;
+
 /**
- *
- * @Author Samson Hailu
+ * @author Samson Hailu
+ * @author Rimon Mostafiz
  */
 
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
+    private final UserDetailsServiceImpl userDetailsService;
     private String secretKey;
-    private long validityInMilliseconds;
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
-    public JwtTokenProvider() {
-    }
+    @Value("${jwt.secret.key}")
+    private String jwtSecretKey;
+    @Value("${jwt.expire.duration")
+    private Long jwtExpireDuration;
 
     @PostConstruct
     protected void init() {
-        this.secretKey = Base64.getEncoder().encodeToString("SECRET_KEY".getBytes());
+        this.secretKey = Base64.getEncoder().encodeToString(jwtSecretKey.getBytes());
     }
 
     private Algorithm getAlgorithm() {
-        Algorithm algorithm = Algorithm.HMAC256(this.secretKey);
-        return algorithm;
+        return Algorithm.HMAC256(this.secretKey);
     }
 
     public String createToken(String username) {
-        String token = null;
-        Date now = new Date();
-        Date expiryTime = new Date(now.getTime() + 900000L);
-
         try {
-            Algorithm algorithm = Algorithm.HMAC256(this.secretKey);
-            token = JWT.create().withIssuer("auth0").withSubject(username).withIssuedAt(now).withExpiresAt(expiryTime).sign(this.getAlgorithm());
-        } catch (JWTCreationException var6) {
+            Date dateNow = new Date();
+            Date expiryTime = new Date(new Date().getTime() + jwtExpireDuration);
+            return JWT.create()
+                    .withIssuer(SecurityUtils.ISSUER)
+                    .withSubject(username)
+                    .withIssuedAt(dateNow)
+                    .withExpiresAt(expiryTime)
+                    .sign(this.getAlgorithm());
+        } catch (JWTCreationException ex) {
+            log.error("Error while creating jwtToken", ex);
+            return null;
         }
-
-        return token;
     }
 
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(this.getUsername(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return getUserNamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     public String getUsername(String token) {
-        String username = null;
-
         try {
-            JWTVerifier verifier = JWT.require(this.getAlgorithm()).withIssuer(new String[]{"auth0"}).build();
+            JWTVerifier verifier = JWT.require(this.getAlgorithm())
+                    .withIssuer(new String[]{SecurityUtils.ISSUER})
+                    .build();
             DecodedJWT jwt = verifier.verify(token);
-            username = jwt.getSubject();
-        } catch (JWTVerificationException var5) {
+            return jwt.getSubject();
+        } catch (JWTVerificationException ex) {
+            log.debug("Error while verifying jwt token", ex);
+            return null;
         }
-
-        return username;
     }
 
     public String resolveToken(HttpServletRequest req) {
-        String bearerToken = req.getHeader("Authorization");
-        return bearerToken != null && bearerToken.startsWith("Bearer ") ? bearerToken.substring(7) : null;
+        String bearerToken = req.getHeader(SecurityUtils.AUTHORIZATION_HEADER);
+        return bearerToken != null
+                && bearerToken.startsWith(SecurityUtils.TOKEN_PREFIX)
+                ? bearerToken.substring(7)
+                : null;
     }
 
     public boolean validateToken(String token) {
         try {
-            JWTVerifier verifier = JWT.require(this.getAlgorithm()).withIssuer(new String[]{"auth0"}).build();
+            JWTVerifier verifier = JWT.require(this.getAlgorithm())
+                    .withIssuer(new String[]{SecurityUtils.ISSUER})
+                    .build();
             verifier.verify(token);
             return true;
-        } catch (JWTVerificationException var4) {
+        } catch (JWTVerificationException ex) {
+            log.debug("Error while validating jwt token", ex);
             return false;
         }
     }

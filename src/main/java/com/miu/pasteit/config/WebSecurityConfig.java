@@ -1,5 +1,9 @@
-package com.miu.pasteit.security;
+package com.miu.pasteit.config;
 
+import com.miu.pasteit.security.JWTAuthenticationFilter;
+import com.miu.pasteit.security.JWTAuthorizationFilter;
+import com.miu.pasteit.service.user.UserDetailsServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -8,28 +12,22 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer.AuthorizedUrl;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
-import static com.miu.pasteit.security.SecurityConstants.SIGN_UP_URL;
+import static com.miu.pasteit.security.SecurityUtils.SIGN_UP_URL;
 
 /**
- *
- * @Author Samson Hailu
+ * @author Samson Hailu
+ * @author Rimon Mostafiz
  */
-
-
 @EnableWebSecurity
-public class WebSecurity extends WebSecurityConfigurerAdapter {
-    private UserDetailsServiceImpl userDetailsService;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+@RequiredArgsConstructor
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    public WebSecurity(UserDetailsServiceImpl userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userDetailsService = userService;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -46,12 +44,17 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
 
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(this.userDetailsService).passwordEncoder(this.bCryptPasswordEncoder);
+        auth.userDetailsService(this.userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public PasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
 
