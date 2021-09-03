@@ -1,42 +1,36 @@
 package com.miu.pasteit.api;
 
+import com.miu.pasteit.model.common.RestResponse;
+import com.miu.pasteit.model.dto.UserModel;
 import com.miu.pasteit.model.entity.db.User;
+import com.miu.pasteit.model.mapper.UserMapper;
 import com.miu.pasteit.model.request.UserCreateRequest;
-import com.miu.pasteit.repository.UserRepository;
 import com.miu.pasteit.service.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.miu.pasteit.utils.ResponseUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
- * @Author Samson Hailu
+ * @author Samson Hailu
+ * @author Rimon Mostafiz
  */
 
 @RestController
 @RequestMapping({"/v1/api/user"})
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping({"/create"})
-    public ResponseEntity<User> createUser(@RequestBody UserCreateRequest userCreateRequest) {
-
+    public ResponseEntity<RestResponse<UserModel>> createUser(@RequestBody UserCreateRequest userCreateRequest) {
         User user = userService.createUser(userCreateRequest, userCreateRequest.getUsername());
-
-        user.setPassword(this.bCryptPasswordEncoder.encode(userCreateRequest.getPassword()));
-
-        return ResponseEntity.ok(user);
+        UserModel userModel = UserMapper.mapToUserModel(user);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, userModel);
     }
 }

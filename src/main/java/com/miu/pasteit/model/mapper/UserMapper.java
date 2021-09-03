@@ -3,9 +3,6 @@ package com.miu.pasteit.model.mapper;
 import com.miu.pasteit.model.dto.UserModel;
 import com.miu.pasteit.model.entity.db.User;
 import com.miu.pasteit.model.request.UserCreateRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 
 /**
