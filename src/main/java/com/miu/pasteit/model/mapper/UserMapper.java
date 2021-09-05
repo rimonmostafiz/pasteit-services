@@ -1,7 +1,7 @@
 package com.miu.pasteit.model.mapper;
 
 import com.miu.pasteit.model.dto.UserModel;
-import com.miu.pasteit.model.entity.db.User;
+import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.UserCreateRequest;
 
 

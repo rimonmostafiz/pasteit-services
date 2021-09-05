@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 import static com.miu.pasteit.security.SecurityUtils.SIGN_UP_URL;
+import static com.miu.pasteit.utils.UrlHelper.*;
 
 /**
  * @author Samson Hailu
@@ -45,6 +47,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(this.userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+    }
+
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers(all(API_DOCS),
+                all(V2_API_DOCS),
+                all(CONFIGURATION),
+                CONFIGURATION_UI,
+                all(WEB_JARS),
+                all(SWAGGER_RESOURCES),
+                SWAGGER_UI_HTML,
+                all(SWAGGER_UI)
+        );
     }
 
     @Bean

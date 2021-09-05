@@ -1,5 +1,7 @@
 package com.miu.pasteit;
 
+import com.miu.pasteit.repository.mongo.PasteRepository;
+import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -12,9 +14,10 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 /**
  * @author Rimon Mostafiz
  */
-@EnableMongoRepositories("com.miu.pasteit.repository")
-@EnableJpaRepositories(excludeFilters =
-@ComponentScan.Filter(type = FilterType.REGEX, pattern = "com.miu.pasteit.repository.*")
+@EnableMongoRepositories("com.miu.pasteit.repository.*")
+@EnableJpaRepositories(excludeFilters = @ComponentScan.Filter(
+        type = FilterType.ASSIGNABLE_TYPE,
+        classes = {PasteRepository.class, ActivityPasteRepository.class})
 )
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @EnableConfigurationProperties

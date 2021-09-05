@@ -1,10 +1,10 @@
-package com.miu.pasteit.model.entity.activity;
+package com.miu.pasteit.model.entity.activity.nosql;
 
 import com.miu.pasteit.model.entity.common.ActivityAction;
-import com.miu.pasteit.model.entity.common.ActivityCommon;
 import com.miu.pasteit.model.entity.common.Language;
+import com.miu.pasteit.model.entity.common.NoSqlActivityCommon;
 import com.miu.pasteit.model.entity.common.PasteStatus;
-import com.miu.pasteit.model.entity.db.Paste;
+import com.miu.pasteit.model.entity.db.nosql.Paste;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Document("ACTIVITY_PASTE")
 @EqualsAndHashCode(callSuper = true)
-public class ActivityPaste extends ActivityCommon {
+public class ActivityPaste extends NoSqlActivityCommon {
     @Id
     private String activityId;
 
@@ -49,7 +49,7 @@ public class ActivityPaste extends ActivityCommon {
 
     private Long validity;
 
-    private String pasteUser;
+    private Long pasteUser;
 
     private LocalDateTime pasteDateTime;
 
@@ -62,18 +62,18 @@ public class ActivityPaste extends ActivityCommon {
         activity.setDescription(entity.getDescription());
         activity.setStatus(entity.getStatus());
         if (entity.getPasteUser() != null) {
-            activity.setPasteUser(entity.getPasteUser().getId());
+            activity.setPasteUser(entity.getPasteUser());
         }
         activity.setPasteDateTime(entity.getPasteDateTime());
 
-        ActivityCommon.mapper(activity, entity);
+        NoSqlActivityCommon.mapper(activity, entity);
 
         return activity;
     }
 
     public static ActivityPaste of(Paste paste, String activityUser, ActivityAction activityAction) {
         ActivityPaste activity = of(paste);
-        ActivityCommon.mapper(activity, activityUser, activityAction);
+        NoSqlActivityCommon.mapper(activity, activityUser, activityAction);
         return activity;
     }
 }
