@@ -3,7 +3,6 @@ package com.miu.pasteit.model.entity.db.nosql;
 import com.miu.pasteit.model.entity.common.Language;
 import com.miu.pasteit.model.entity.common.NoSqlEntityCommon;
 import com.miu.pasteit.model.entity.common.PasteStatus;
-import com.miu.pasteit.model.entity.db.Feedback;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

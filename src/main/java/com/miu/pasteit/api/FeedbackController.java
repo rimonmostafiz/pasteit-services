@@ -1,7 +1,7 @@
 package com.miu.pasteit.api;
 
 import com.miu.pasteit.model.common.RestResponse;
-import com.miu.pasteit.model.entity.db.Feedback;
+import com.miu.pasteit.model.entity.db.nosql.Feedback;
 import com.miu.pasteit.model.request.FeedbackCreateRequest;
 import com.miu.pasteit.service.feedback.FeedbackService;
 import com.miu.pasteit.service.paste.PasteService;
