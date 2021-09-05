@@ -74,7 +74,6 @@ flyway {
 	url=project.ext['test.flyway.url']
 	user=project.ext['test.flyway.user']
 	password=project.ext['test.flyway.password']
-	cleanDisabled=true
 }
 
 task flywayMigrateDevDatabase(type: FlywayMigrateTask) {
