@@ -3,6 +3,8 @@ package com.miu.pasteit.model.mapper;
 import com.miu.pasteit.model.dto.PasteModel;
 import com.miu.pasteit.model.entity.common.Language;
 import com.miu.pasteit.model.entity.common.PasteStatus;
+import com.miu.pasteit.model.entity.db.nosql.Paste;
+import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.entity.db.Feedback;
 import com.miu.pasteit.model.entity.db.Paste;
 import com.miu.pasteit.model.entity.db.User;
@@ -27,7 +29,7 @@ public class PasteMapper {
         model.setStatus(entity.getStatus());
         model.setLanguage(entity.getLanguage());
         model.setFolder(entity.getFolder());
-        model.setPasteUser(UserMapper.mapperForInternal(entity.getPasteUser()));
+        model.setPasteUser(entity.getPasteUser());
         model.setPasteDateTime(entity.getPasteDateTime());
         return model;
     }
@@ -40,7 +42,7 @@ public class PasteMapper {
         entity.setDescription(pasteCreateRequest.getDescription());
         entity.setStatus(PasteStatus.getStatus(pasteCreateRequest.getStatus()));
         entity.setLanguage(Language.getLanguage(pasteCreateRequest.getLanguage()));
-        entity.setPasteUser(user);
+        entity.setPasteUser(user.getId());
         entity.setFolder(pasteCreateRequest.getFolder());
         entity.setPasteDateTime(LocalDateTime.now());
 
@@ -57,7 +59,7 @@ public class PasteMapper {
             entity.setStatus(PasteStatus.getStatus(pasteEditRequest.getStatus()));
         }
         if (user != null) {
-            entity.setPasteUser(user);
+            entity.setPasteUser(user.getId());
         }
         entity.setCreatedBy(createdBy);
     }

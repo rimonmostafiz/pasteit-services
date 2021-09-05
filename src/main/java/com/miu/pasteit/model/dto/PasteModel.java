@@ -37,7 +37,7 @@ public class PasteModel {
 
     private LocalDateTime expiryDateTime;
 
-    private UserModel pasteUser;
+    private Long pasteUser;
 
     private LocalDateTime pasteDateTime;
 

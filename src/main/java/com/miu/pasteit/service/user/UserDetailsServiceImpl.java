@@ -1,6 +1,6 @@
 package com.miu.pasteit.service.user;
 
-import com.miu.pasteit.repository.UserRepository;
+import com.miu.pasteit.repository.mysql.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +14,6 @@ import java.util.Collections;
  * @author Samson Hailu
  * @author Rimon Mostafiz
  */
-
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {

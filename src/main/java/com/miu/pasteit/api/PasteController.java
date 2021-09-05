@@ -99,7 +99,7 @@ public class PasteController {
             value = "Get all Pastes by user",
             notes = "An ADMIN User has the privilege to call this API"
     )
-    public ResponseEntity<RestResponse<PasteResponse>> searchAllByUser(@PathVariable String userId) {
+    public ResponseEntity<RestResponse<PasteResponse>> searchAllByUser(@PathVariable Long userId) {
         List<PasteModel> Pastes = pasteService.getAllPasteByUser(userId);
         PasteResponse pasteResponse = PasteResponse.of(Pastes);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);

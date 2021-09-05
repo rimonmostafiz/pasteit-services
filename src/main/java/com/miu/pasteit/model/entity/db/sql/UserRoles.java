@@ -1,28 +1,34 @@
-package com.miu.pasteit.model.entity.db;
+package com.miu.pasteit.model.entity.db.sql;
 
 import com.miu.pasteit.model.entity.common.EntityCommon;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.persistence.*;
 
 /**
  * @author Rimon Mostafiz
  */
 @Data
+@Entity
 @NoArgsConstructor
-@Document("USER_ROLES")
+@Table(name = "USER_ROLES")
 @AllArgsConstructor(staticName = "of")
 @EqualsAndHashCode(callSuper = true)
 public class UserRoles extends EntityCommon {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    private Long id;
 
-    private String userId;
+    @Column(name = "USER_ID")
+    private Long userId;
 
-    private String roleId;
+    @Column(name = "ROLE_ID")
+    private Long roleId;
 
+    @Column(name = "ROLE_NAME")
     private String roleName;
 }

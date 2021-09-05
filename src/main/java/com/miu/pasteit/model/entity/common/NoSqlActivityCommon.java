@@ -16,32 +16,27 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = true)
 @AttributeOverride(name = "version", column = @Column(name = "INTERNAL_VERSION"))
-public abstract class ActivityCommon extends EntityCommon implements Serializable {
-    @Column(name = "ACTIVITY_USER")
+public abstract class NoSqlActivityCommon extends NoSqlEntityCommon implements Serializable {
+
     protected String activityUser;
 
-    @Column(name = "ACTIVITY_ACTION")
     protected int activityAction;
 
-    @Column(name = "ACTIVITY_TIME")
     protected LocalDateTime activityTime;
 
-    @Column(name = "INTERNAL_VERSION")
-    protected Long version;
+    public abstract String getId();
 
-    public static void mapper(ActivityCommon activity, String activityUser, ActivityAction activityAction) {
+    public static void mapper(NoSqlActivityCommon activity, String activityUser, ActivityAction activityAction) {
         activity.setActivityUser(activityUser);
         activity.setActivityAction(activityAction.getAction());
         activity.setActivityTime(LocalDateTime.now());
     }
 
-    public static void mapper(ActivityCommon activity, EntityCommon entity) {
+    public static void mapper(NoSqlActivityCommon activity, NoSqlEntityCommon entity) {
         activity.setCreatedBy(entity.getCreatedBy());
         activity.setCreateTime(entity.getCreateTime());
         activity.setEditedBy(entity.getEditedBy());
         activity.setEditTime(entity.getEditTime());
         activity.setVersion(entity.getVersion());
     }
-
-    public abstract Long getId();
 }
