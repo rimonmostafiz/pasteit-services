@@ -3,14 +3,14 @@ package com.miu.pasteit.service.feedback;
 import com.miu.pasteit.component.exception.EntityNotFoundException;
 import com.miu.pasteit.component.exception.ValidationException;
 import com.miu.pasteit.model.entity.common.PasteStatus;
-import com.miu.pasteit.model.entity.db.Paste;
+import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.Feedback;
-import com.miu.pasteit.model.entity.db.User;
+import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.mapper.FeedbackMapper;
 import com.miu.pasteit.model.mapper.PasteMapper;
 import com.miu.pasteit.model.request.FeedbackCreateRequest;
 import com.miu.pasteit.repository.FeedbackRepository;
-import com.miu.pasteit.repository.PasteRepository;
+import com.miu.pasteit.repository.mongo.PasteRepository;
 import com.miu.pasteit.service.paste.PasteService;
 import com.miu.pasteit.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
- * @author Rimon Mostafiz
+ * @author Abdi Wako Jilo
  */
 @Service
 @Transactional
