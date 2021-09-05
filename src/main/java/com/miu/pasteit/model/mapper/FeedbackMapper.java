@@ -1,7 +1,7 @@
 package com.miu.pasteit.model.mapper;
 
 import com.miu.pasteit.model.dto.FeedbackModel;
-import com.miu.pasteit.model.entity.db.Feedback;
+import com.miu.pasteit.model.entity.db.nosql.Feedback;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.FeedbackCreateRequest;
 import com.miu.pasteit.model.request.FeedbackEditRequest;

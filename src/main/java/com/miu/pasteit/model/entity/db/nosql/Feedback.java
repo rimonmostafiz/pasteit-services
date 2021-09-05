@@ -1,4 +1,4 @@
-package com.miu.pasteit.model.entity.db;
+package com.miu.pasteit.model.entity.db.nosql;
 
 import com.miu.pasteit.model.entity.common.EntityCommon;
 import com.miu.pasteit.model.entity.db.sql.User;
@@ -7,7 +7,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.OneToMany;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -18,6 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "of")
 @Document("FEEDBACK")
+@EqualsAndHashCode(callSuper = true)
 public class Feedback extends EntityCommon {
 
     @Id

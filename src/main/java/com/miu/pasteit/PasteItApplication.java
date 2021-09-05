@@ -1,5 +1,6 @@
 package com.miu.pasteit;
 
+import com.miu.pasteit.repository.mongo.FeedbackRepository;
 import com.miu.pasteit.repository.mongo.PasteRepository;
 import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
 import org.springframework.boot.SpringApplication;
@@ -17,7 +18,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoRepositories("com.miu.pasteit.repository.*")
 @EnableJpaRepositories(excludeFilters = @ComponentScan.Filter(
         type = FilterType.ASSIGNABLE_TYPE,
-        classes = {PasteRepository.class, ActivityPasteRepository.class})
+        classes = {PasteRepository.class,
+                ActivityPasteRepository.class,
+                FeedbackRepository.class})
 )
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @EnableConfigurationProperties
