@@ -5,6 +5,8 @@ import com.miu.pasteit.model.entity.common.Language;
 import com.miu.pasteit.model.entity.common.PasteStatus;
 import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
+import com.miu.pasteit.model.entity.db.Feedback;
+import com.miu.pasteit.model.request.FeedbackCreateRequest;
 import com.miu.pasteit.model.request.PasteCreateRequest;
 import com.miu.pasteit.model.request.PasteEditRequest;
 
@@ -59,4 +61,13 @@ public class PasteMapper {
         }
         entity.setCreatedBy(createdBy);
     }
+
+    public static void addFeedbackToEntity(Paste entity, Feedback feedback, String createdBy, Long user) {
+
+        if (feedback.getComment() != null) {
+            entity.addFeedBack(feedback);
+        }
+        entity.setCreatedBy(createdBy);
+    }
+
 }
