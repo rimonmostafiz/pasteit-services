@@ -1,6 +1,7 @@
 package com.miu.pasteit.model.entity.db;
 
 import com.miu.pasteit.model.entity.common.EntityCommon;
+import com.miu.pasteit.model.entity.db.sql.User;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -20,7 +21,7 @@ import java.time.LocalDateTime;
 public class Feedback extends EntityCommon {
 
     @Id
-    private String id;
+    private Long id;
     private String comment;
     private LocalDateTime dateTime;
 
