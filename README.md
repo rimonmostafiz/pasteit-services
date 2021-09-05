@@ -14,3 +14,7 @@
 ```
 docker-compose -f docker-compose.yaml up
 ```
+
+## Swagger URL
+
+http://localhost:8088/pasteit-services/swagger-ui/#/
