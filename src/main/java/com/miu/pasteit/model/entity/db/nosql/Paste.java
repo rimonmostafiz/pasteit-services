@@ -1,7 +1,7 @@
-package com.miu.pasteit.model.entity.db;
+package com.miu.pasteit.model.entity.db.nosql;
 
-import com.miu.pasteit.model.entity.common.EntityCommon;
 import com.miu.pasteit.model.entity.common.Language;
+import com.miu.pasteit.model.entity.common.NoSqlEntityCommon;
 import com.miu.pasteit.model.entity.common.PasteStatus;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(staticName = "of")
 @Document("PASTE")
 @EqualsAndHashCode(callSuper = true)
-public class Paste extends EntityCommon {
+public class Paste extends NoSqlEntityCommon {
     @Id
     private String id;
 
@@ -46,7 +46,7 @@ public class Paste extends EntityCommon {
     private Long validity;
 
     //TODO: fetch lazily
-    private User pasteUser;
+    private Long pasteUser;
 
     private LocalDateTime pasteDateTime;
 

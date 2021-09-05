@@ -3,7 +3,7 @@ package com.miu.pasteit.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.miu.pasteit.model.entity.db.User;
+import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.response.AuthResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +31,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Value("${jwt.secret.key}")
     private String jwtSecretKey;
 
-    @Value("${jwt.expire.duration")
+    @Value("${jwt.expire.duration}")
     private Long jwtExpireDuration;
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {

@@ -1,44 +1,50 @@
-package com.miu.pasteit.model.entity.activity;
+package com.miu.pasteit.model.entity.activity.sql;
 
 import com.miu.pasteit.model.entity.common.ActivityAction;
 import com.miu.pasteit.model.entity.common.ActivityCommon;
 import com.miu.pasteit.model.entity.common.Status;
-import com.miu.pasteit.model.entity.db.User;
+import com.miu.pasteit.model.entity.db.sql.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 
 /**
  * @author Rimon Mostafiz
  */
 @Data
+@Entity
 @NoArgsConstructor
-@Document("ACTIVITY_USER")
+@Table(name = "ACTIVITY_USER")
 @EqualsAndHashCode(callSuper = true)
 public class ActivityUser extends ActivityCommon {
 
     @Id
-    private String activityId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ACTIVITY_ID")
+    private Long activityId;
 
-    //userId
-    private String id;
+    @Column(name = "USER_ID")
+    private Long id;
 
+    @Column(name = "USERNAME")
     private String username;
 
+    @Column(name = "PASSWORD")
     private String password;
 
+    @Column(name = "EMAIL")
     private String email;
 
+    @Column(name = "FIRST_NAME")
     private String firstName;
 
+    @Column(name = "LAST_NAME")
     private String lastName;
 
+    @Column(name = "STATUS")
     @Enumerated(EnumType.STRING)
     private Status status;
 
