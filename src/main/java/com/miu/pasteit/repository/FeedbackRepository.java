@@ -1,8 +1,7 @@
 package com.miu.pasteit.repository;
 
 import com.miu.pasteit.model.entity.db.Feedback;
-import com.miu.pasteit.model.entity.db.Paste;
-import com.miu.pasteit.model.entity.db.User;
+import com.miu.pasteit.model.entity.db.sql.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
