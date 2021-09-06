@@ -43,9 +43,9 @@ public class PasteService {
 
     public PasteModel createPaste(PasteCreateRequest PasteCreateRequest, String requestUser) {
         User user = userservice.getUserByUsername(requestUser);
-        Paste Paste = PasteMapper.createRequestToEntity(PasteCreateRequest, requestUser, user);
-        Paste savedPaste = pasteRepository.save(Paste);
-
+        System.out.println(user);
+        Paste paste = PasteMapper.createRequestToEntity(PasteCreateRequest, requestUser, user);
+        Paste savedPaste = pasteRepository.save(paste);
         ActivityPaste activityPaste = ActivityPaste.of(savedPaste, requestUser, ActivityAction.INSERT);
         activityPasteRepository.save(activityPaste);
 
