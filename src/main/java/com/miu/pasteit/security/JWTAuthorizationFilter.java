@@ -2,7 +2,9 @@ package com.miu.pasteit.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.miu.pasteit.service.user.SessionService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.Optional;
 
 /**
@@ -24,19 +27,31 @@ import java.util.Optional;
 @Slf4j
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
+    private SessionService sessionService;
+
     @Value("${jwt.secret.key}")
     private String jwtSecretKey;
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager) {
+    public JWTAuthorizationFilter(AuthenticationManager authManager, SessionService sessionService) {
         super(authManager);
+        this.sessionService = sessionService;
     }
 
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
+
         String header = req.getHeader(SecurityUtils.AUTHORIZATION_HEADER);
-        if (header != null && header.startsWith(SecurityUtils.TOKEN_PREFIX)) {
-            UsernamePasswordAuthenticationToken authentication = this.getAuthentication(req);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        if (header == null || !header.startsWith(SecurityUtils.TOKEN_PREFIX)) {
+            chain.doFilter(req, res);
+            return;
         }
+
+        UsernamePasswordAuthenticationToken authentication = getAuthentication(req);
+
+        if (!sessionService.IsLoggedIn(authentication.getName())) {
+            throw new AccessDeniedException("user unauthorized");
+        }
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }
 

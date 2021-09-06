@@ -2,6 +2,8 @@ package com.miu.pasteit.config;
 
 import com.miu.pasteit.security.JWTAuthenticationFilter;
 import com.miu.pasteit.security.JWTAuthorizationFilter;
+import com.miu.pasteit.security.SecurityUtils;
+import com.miu.pasteit.service.user.SessionService;
 import com.miu.pasteit.service.user.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +20,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
-import static com.miu.pasteit.security.SecurityUtils.SIGN_UP_URL;
 import static com.miu.pasteit.utils.UrlHelper.*;
 
 /**
@@ -29,20 +30,35 @@ import static com.miu.pasteit.utils.UrlHelper.*;
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final SessionService sessionService;
+
     private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager()))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
-                // this disables session creation on Spring Security
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+
+        http.cors().and().csrf().disable();
+
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
+        http.formLogin()
+                .loginProcessingUrl("/login")
+                .and()
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .addLogoutHandler(sessionService)
+                );
+
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.POST, SecurityUtils.SIGN_UP_URL).permitAll()
+                .anyRequest().authenticated().
+                and().addFilter(new JWTAuthenticationFilter(authenticationManager(), sessionService))
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(), sessionService));
+
+        http.exceptionHandling()
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
     }
 
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
