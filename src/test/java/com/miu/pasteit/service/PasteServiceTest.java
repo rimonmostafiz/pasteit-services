@@ -20,14 +20,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.springframework.http.HttpStatus;
 
 /**
  * @author Nadia Mimoun
@@ -48,7 +48,7 @@ public class PasteServiceTest {
 
     @BeforeEach
     public void setUp(){
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
     }
 
@@ -56,7 +56,7 @@ public class PasteServiceTest {
     public void getPaste() throws Exception{
         Paste paste = Paste.of("1234","mmmmm","lkj","paste1",
                 "/paste/1","desc", PasteStatus.PUBLIC, Language.JAVA,"folder",
-                new Long(23),new Long(234), LocalDateTime.now() ,"share",null,100);
+                23L, 234L, LocalDateTime.now() ,"share",null,100);
         given(pasteRepository.findById("1234")).willReturn(Optional.of(paste));
 
         PasteModel result = pasteService.getPaste("1234");
@@ -75,13 +75,13 @@ public class PasteServiceTest {
     @Test
     public void createPaste() throws Exception{
 
-        User user = User.of(new Long(245),"user","111","nadia@gmail.com",
+        User user = User.of(245L,"user","111","nadia@gmail.com",
                 "nadia","mimoun",Status.ACTIVE,null);
         given(userservice.getUserByUsername("user")).willReturn(user);
 
         Paste savedPaste = Paste.of("1234","content","lkj","paste1",
                 "/paste/1","desc", PasteStatus.PRIVATE, Language.JAVA,"folder",
-                new Long(23),new Long(234), LocalDateTime.now(),"share",null,100);
+                23L, 234L, LocalDateTime.now(),"share",null,100);
 
         PasteCreateRequest pasteCreateRequest= new PasteCreateRequest("content","title",
                 "des","public","JAVA","folder");

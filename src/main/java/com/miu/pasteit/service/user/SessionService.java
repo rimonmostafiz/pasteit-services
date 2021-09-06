@@ -18,7 +18,7 @@ public class SessionService implements LogoutHandler {
     @Value("${jwt.secret.key}")
     private String jwtSecretKey;
 
-    private HashSet<String> loggedUsers = new HashSet<>();
+    private final HashSet<String> loggedUsers = new HashSet<>();
 
     public void addLoggedUser(String token) {
         loggedUsers.add(token);

@@ -6,7 +6,6 @@ import com.miu.pasteit.security.SecurityUtils;
 import com.miu.pasteit.service.user.SessionService;
 import com.miu.pasteit.service.user.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
-import static com.miu.pasteit.security.SecurityUtils.SIGN_UP_URL;
 import static com.miu.pasteit.utils.UrlHelper.*;
 
 /**
