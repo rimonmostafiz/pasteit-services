@@ -12,26 +12,21 @@ import java.time.ZoneId;
  */
 @Data
 @MappedSuperclass
-public abstract class EntityCommon implements Serializable {
-    @Column(name = "CREATED_BY")
+public abstract class NoSqlEntityCommon implements Serializable {
     protected String createdBy;
 
-    @Column(name = "EDITED_BY")
     protected String editedBy;
 
-    @Column(name = "CREATE_TIME")
     protected LocalDateTime createTime;
 
-    @Column(name = "EDIT_TIME")
     protected LocalDateTime editTime;
 
     @Version
-    @Column(name = "INTERNAL_VERSION")
     protected Long version;
 
-    public abstract Long getId();
+    public abstract String getId();
 
-    public abstract void setId(Long id);
+    public abstract void setId(String id);
 
     @PrePersist
     public void beforeSave() {

@@ -3,16 +3,16 @@ package com.miu.pasteit.service.paste;
 import com.miu.pasteit.component.exception.EntityNotFoundException;
 import com.miu.pasteit.component.exception.ValidationException;
 import com.miu.pasteit.model.dto.PasteModel;
-import com.miu.pasteit.model.entity.activity.ActivityPaste;
+import com.miu.pasteit.model.entity.activity.nosql.ActivityPaste;
 import com.miu.pasteit.model.entity.common.ActivityAction;
 import com.miu.pasteit.model.entity.common.PasteStatus;
-import com.miu.pasteit.model.entity.db.Paste;
-import com.miu.pasteit.model.entity.db.User;
+import com.miu.pasteit.model.entity.db.nosql.Paste;
+import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.mapper.PasteMapper;
 import com.miu.pasteit.model.request.PasteCreateRequest;
 import com.miu.pasteit.model.request.PasteEditRequest;
-import com.miu.pasteit.repository.PasteRepository;
-import com.miu.pasteit.repository.activity.ActivityPasteRepository;
+import com.miu.pasteit.repository.mongo.PasteRepository;
+import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
 import com.miu.pasteit.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,9 +43,8 @@ public class PasteService {
 
     public PasteModel createPaste(PasteCreateRequest PasteCreateRequest, String requestUser) {
         User user = userservice.getUserByUsername(requestUser);
-        Paste Paste = PasteMapper.createRequestToEntity(PasteCreateRequest, requestUser, user);
-        Paste savedPaste = pasteRepository.save(Paste);
-
+        Paste paste = PasteMapper.createRequestToEntity(PasteCreateRequest, requestUser, user);
+        Paste savedPaste = pasteRepository.save(paste);
         ActivityPaste activityPaste = ActivityPaste.of(savedPaste, requestUser, ActivityAction.INSERT);
         activityPasteRepository.save(activityPaste);
 
@@ -75,9 +74,9 @@ public class PasteService {
                 .collect(Collectors.toList());
     }
 
-    public List<PasteModel> getAllPasteByUser(String userId) {
+    public List<PasteModel> getAllPasteByUser(Long userId) {
         List<Paste> Pastes = userservice.findById(userId)
-                .map(pasteRepository::findAllByPasteUser)
+                .map(user -> pasteRepository.findAllByPasteUser(user.getId()))
                 .orElseThrow(UserService.userNotFound);
 
         return Pastes.stream()
@@ -123,7 +122,10 @@ public class PasteService {
             throw new ValidationException(HttpStatus.BAD_REQUEST, "status", "error.paste.status.deleted.not.editable");
         }
 
-        PasteMapper.updateRequestToEntity(paste, pasteEditRequest, requestUser, paste.getPasteUser());
+        userservice.findById(paste.getPasteUser())
+                .ifPresent(pasteUser
+                        -> PasteMapper
+                        .updateRequestToEntity(paste, pasteEditRequest, requestUser, pasteUser));
 
         Paste savedPaste = pasteRepository.save(paste);
 

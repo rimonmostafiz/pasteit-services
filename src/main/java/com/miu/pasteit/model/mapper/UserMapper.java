@@ -1,9 +1,9 @@
 package com.miu.pasteit.model.mapper;
 
 import com.miu.pasteit.model.dto.UserModel;
-import com.miu.pasteit.model.entity.db.User;
+import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.UserCreateRequest;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 /**
  * @author Rimon Mostafiz
@@ -40,10 +40,10 @@ public class UserMapper {
     }
 
     public static User mapUserCreateRequest(UserCreateRequest userCreateRequest, String createdBy,
-                                            PasswordEncoder encoder) {
+                                            String hashedPassword) {
         User user = new User();
         user.setUsername(userCreateRequest.getUsername());
-        user.setPassword(encoder.encode(userCreateRequest.getPassword()));
+        user.setPassword(hashedPassword);
         user.setEmail(userCreateRequest.getEmail());
         user.setFirstName(userCreateRequest.getFirstName());
         user.setLastName(userCreateRequest.getLastName());
