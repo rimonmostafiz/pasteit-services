@@ -14,13 +14,16 @@ import com.miu.pasteit.model.request.PasteUpdateRequest;
 import com.miu.pasteit.repository.mongo.PasteRepository;
 import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
 import com.miu.pasteit.service.user.UserService;
+import com.miu.pasteit.utils.UrlGenerationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -37,13 +40,22 @@ public class PasteService {
             new EntityNotFoundException(HttpStatus.BAD_REQUEST, "pasteId", "error.paste.not.found");
     public static final Supplier<ValidationException> notOwnPaste = () ->
             new ValidationException(HttpStatus.UNAUTHORIZED, "pasteId", "error.paste.user.not.authorized");
+    public static final Consumer<Paste> urlAlreadyExists = (paste) -> {
+        throw new RuntimeException(String.format("Generated URL [%s] already exists for pasteId [%s]", paste.getUrl(), paste.getId()));
+    };
+
     private final UserService userservice;
     private final PasteRepository pasteRepository;
     private final ActivityPasteRepository activityPasteRepository;
 
+    @Retryable(value = RuntimeException.class, maxAttempts = 10)
     public PasteModel createPaste(PasteCreateRequest PasteCreateRequest, String requestUser) {
+        String randomUrl = UrlGenerationUtil.getInstance().generateRandomURL();
+        pasteRepository.findByUrl(randomUrl)
+                .ifPresent(urlAlreadyExists);
+
         User user = userservice.getUserByUsername(requestUser);
-        Paste paste = PasteMapper.createRequestToEntity(PasteCreateRequest, requestUser, user);
+        Paste paste = PasteMapper.createRequestToEntity(PasteCreateRequest, requestUser, user, randomUrl);
         Paste savedPaste = pasteRepository.save(paste);
         ActivityPaste activityPaste = ActivityPaste.of(savedPaste, requestUser, ActivityAction.INSERT);
         activityPasteRepository.save(activityPaste);

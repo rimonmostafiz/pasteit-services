@@ -36,10 +36,7 @@ public class PasteController {
     private final PasteService pasteService;
 
     @PostMapping("/paste")
-    @ApiOperation(
-            value = "Create Paste",
-            code = 201
-    )
+    @ApiOperation(value = "Create Paste", code = 201)
     public ResponseEntity<RestResponse<PasteResponse>> createPaste(HttpServletRequest request,
                                                                    @RequestBody @Valid PasteCreateRequest PasteCreateRequest) {
         String requestUser = Utils.getUserNameFromRequest(request);
