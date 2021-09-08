@@ -4,10 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.miu.pasteit.model.entity.db.sql.User;
-import com.miu.pasteit.model.response.AuthResponse;
 import com.miu.pasteit.service.user.SessionService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -30,7 +28,7 @@ import static com.miu.pasteit.security.SecurityUtils.getUserNamePasswordAuthenti
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
 
-    private SessionService sessionService;
+    private final SessionService sessionService;
 
     @Value("${jwt.secret.key}")
     private String jwtSecretKey;

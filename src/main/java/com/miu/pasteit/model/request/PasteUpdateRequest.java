@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PasteEditRequest {
+public class PasteUpdateRequest {
     private String content;
 
     private String description;

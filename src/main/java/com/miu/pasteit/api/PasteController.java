@@ -4,7 +4,7 @@ import com.miu.pasteit.model.common.RestResponse;
 import com.miu.pasteit.model.dto.PasteModel;
 import com.miu.pasteit.model.entity.common.PasteStatus;
 import com.miu.pasteit.model.request.PasteCreateRequest;
-import com.miu.pasteit.model.request.PasteEditRequest;
+import com.miu.pasteit.model.request.PasteUpdateRequest;
 import com.miu.pasteit.model.response.PasteResponse;
 import com.miu.pasteit.service.paste.PasteService;
 import com.miu.pasteit.utils.ResponseUtils;
@@ -52,9 +52,9 @@ public class PasteController {
     @ApiOperation(value = "Edit Paste")
     public ResponseEntity<RestResponse<PasteResponse>> editPaste(HttpServletRequest request,
                                                                  @PathVariable String id,
-                                                                 @RequestBody PasteEditRequest pasteEditRequest) {
+                                                                 @RequestBody PasteUpdateRequest pasteUpdateRequest) {
         String requestUser = Utils.getUserNameFromRequest(request);
-        PasteModel paste = pasteService.updatePaste(id, pasteEditRequest, requestUser);
+        PasteModel paste = pasteService.updatePaste(id, pasteUpdateRequest, requestUser);
         PasteResponse pasteResponse = PasteResponse.of(paste);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);
     }

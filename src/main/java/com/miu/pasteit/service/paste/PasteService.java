@@ -10,7 +10,7 @@ import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.mapper.PasteMapper;
 import com.miu.pasteit.model.request.PasteCreateRequest;
-import com.miu.pasteit.model.request.PasteEditRequest;
+import com.miu.pasteit.model.request.PasteUpdateRequest;
 import com.miu.pasteit.repository.mongo.PasteRepository;
 import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
 import com.miu.pasteit.service.user.UserService;
@@ -114,7 +114,7 @@ public class PasteService {
         activityPasteRepository.save(activityPaste);
     }
 
-    public PasteModel updatePaste(String id, PasteEditRequest pasteEditRequest, String requestUser) {
+    public PasteModel updatePaste(String id, PasteUpdateRequest pasteUpdateRequest, String requestUser) {
         Paste paste = pasteRepository.findById(id)
                 .orElseThrow(pasteNotFound);
 
@@ -125,7 +125,7 @@ public class PasteService {
         userservice.findById(paste.getPasteUser())
                 .ifPresent(pasteUser
                         -> PasteMapper
-                        .updateRequestToEntity(paste, pasteEditRequest, requestUser, pasteUser));
+                        .updateRequestToEntity(paste, pasteUpdateRequest, requestUser, pasteUser));
 
         Paste savedPaste = pasteRepository.save(paste);
 
