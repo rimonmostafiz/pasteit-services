@@ -7,7 +7,7 @@ import com.miu.pasteit.model.entity.db.nosql.Feedback;
 import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.PasteCreateRequest;
-import com.miu.pasteit.model.request.PasteEditRequest;
+import com.miu.pasteit.model.request.PasteUpdateRequest;
 
 import java.time.LocalDateTime;
 
@@ -47,13 +47,13 @@ public class PasteMapper {
         return entity;
     }
 
-    public static void updateRequestToEntity(Paste entity, PasteEditRequest pasteEditRequest, String createdBy, User user) {
+    public static void updateRequestToEntity(Paste entity, PasteUpdateRequest pasteUpdateRequest, String createdBy, User user) {
 
-        if (pasteEditRequest.getDescription() != null) {
-            entity.setDescription(pasteEditRequest.getDescription());
+        if (pasteUpdateRequest.getDescription() != null) {
+            entity.setDescription(pasteUpdateRequest.getDescription());
         }
-        if (pasteEditRequest.getStatus() != null) {
-            entity.setStatus(PasteStatus.getStatus(pasteEditRequest.getStatus()));
+        if (pasteUpdateRequest.getStatus() != null) {
+            entity.setStatus(PasteStatus.getStatus(pasteUpdateRequest.getStatus()));
         }
         if (user != null) {
             entity.setPasteUser(user.getId());

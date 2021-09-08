@@ -1,6 +1,7 @@
 package com.miu.pasteit.service;
 
 import com.miu.pasteit.component.exception.EntityNotFoundException;
+import com.miu.pasteit.component.exception.ValidationException;
 import com.miu.pasteit.model.dto.PasteModel;
 import com.miu.pasteit.model.entity.activity.nosql.ActivityPaste;
 import com.miu.pasteit.model.entity.common.ActivityAction;
@@ -23,11 +24,18 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.util.Assert;
 
 /**
  * @author Nadia Mimoun
@@ -95,5 +103,69 @@ public class PasteServiceTest {
         PasteModel result = pasteService.createPaste(pasteCreateRequest,"user");
         Assertions.assertThat(result.getId()).isEqualTo("1234");
         Assertions.assertThat(result.getContent()).isEqualTo("content");
+    }
+
+    @Test
+    public void getPasteForUser() throws Exception{
+        Paste paste = Paste.of("12345","mmmmm","lkj","paste1",
+                "/paste/1","desc", PasteStatus.PUBLIC, Language.JAVA,"folder",
+                new Long(23),new Long(234), LocalDateTime.now() ,"share",null,100);
+        paste.setCreatedBy("nadia");
+        given(pasteRepository.findById("12345")).willReturn(Optional.of(paste));
+
+        PasteModel result = pasteService.getPasteForUser("12345","nadia");
+
+        Assertions.assertThat(result.getId()).isEqualTo("12345");
+        Assertions.assertThat(result.getTitle()).isEqualTo("paste1");
+        Assertions.assertThat(result.getLanguage()).isEqualTo(Language.JAVA);
+    }
+    @Test
+    public void getPasteForUser_NotFound_Test(){
+        given(pasteRepository.findById("12345")).willThrow(new EntityNotFoundException(HttpStatus.BAD_REQUEST,
+                "pasteId", "error.paste.not.found"));
+        assertThrows(EntityNotFoundException.class,()->pasteService.getPasteForUser("12345","nadia"));
+
+    }
+    @Test
+    public void getPasteForUser_notOwnPaste_Test(){
+        given(pasteRepository.findById("12345")).willThrow(new ValidationException(HttpStatus.UNAUTHORIZED,
+                "pasteId", "error.paste.user.not.authorized"));
+        assertThrows(ValidationException.class,()->pasteService.getPasteForUser("12345","nadia"));
+
+    }
+    @Test
+    public void getAllPastes() throws Exception{
+        Paste paste1 = Paste.of("12345","mmmmm","lkj","paste1",
+                "/paste/1","desc", PasteStatus.PUBLIC, Language.JAVA,"folder",
+                245L,245L, LocalDateTime.now() ,"share",null,100);
+        Paste paste2 = Paste.of("123456","mmmmm","lkj","paste1",
+                "/paste/1","desc", PasteStatus.PUBLIC, Language.JAVA,"folder",
+                245L,245L, LocalDateTime.now() ,"share",null,100);
+
+
+        given(pasteRepository.findAll()).willReturn((List.of(paste1,paste2)));
+
+        List<PasteModel> result =  pasteService.getAllPastes();
+
+        Assertions.assertThat(result.size()).isEqualTo(2);
+    }
+    @Test
+    public void getAllPasteByUser() throws Exception{
+
+        Paste paste1 = Paste.of("12345","mmmmm","lkj","paste1",
+                "/paste/1","desc", PasteStatus.PUBLIC, Language.JAVA,"folder",
+                23L,234L, LocalDateTime.now() ,"share",null,100);
+        Paste paste2 = Paste.of("123456","mmmmm","lkj","paste1",
+                "/paste/1","desc", PasteStatus.PUBLIC, Language.JAVA,"folder",
+                23L,234L, LocalDateTime.now() ,"share",null,100);
+        paste1.setCreatedBy("user");
+        paste2.setCreatedBy("user");
+        User user = User.of(245L,"user","111","nadia@gmail.com",
+                "nadia","mimoun",Status.ACTIVE,null);
+        given(userservice.findById(245L)).willReturn(Optional.of(user));
+
+        given(pasteRepository.findAllByPasteUser(245L)).willReturn((List.of(paste1,paste2)));
+        List<PasteModel> result =  pasteService.getAllPasteByUser(245L);
+        Assertions.assertThat(result.size()).isEqualTo(2);
     }
 }

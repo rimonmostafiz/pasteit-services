@@ -3,6 +3,7 @@ package com.miu.pasteit.model.mapper;
 import com.miu.pasteit.model.dto.UserModel;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.UserCreateRequest;
+import com.miu.pasteit.model.request.UserUpdateRequest;
 
 
 /**
@@ -11,25 +12,14 @@ import com.miu.pasteit.model.request.UserCreateRequest;
 public class UserMapper {
 
     public static UserModel mapToUserModel(User entity) {
-        UserModel model = new UserModel();
-        model.setId(entity.getId());
-        model.setUsername(entity.getUsername());
-        model.setEmail(entity.getEmail());
-        model.setFirstName(entity.getFirstName());
-        model.setLastName(entity.getLastName());
-        model.setStatus(entity.getStatus());
-        return model;
-    }
-
-    public static UserModel mapUserCreateRequest(User entity) {
-        UserModel model = new UserModel();
-        model.setId(entity.getId());
-        model.setUsername(entity.getUsername());
-        model.setEmail(entity.getEmail());
-        model.setFirstName(entity.getFirstName());
-        model.setLastName(entity.getLastName());
-        model.setStatus(entity.getStatus());
-        return model;
+        return UserModel.builder()
+                .id(entity.getId())
+                .username(entity.getUsername())
+                .email(entity.getEmail())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .status(entity.getStatus())
+                .build();
     }
 
     public static UserModel mapperForInternal(User entity) {
@@ -50,6 +40,16 @@ public class UserMapper {
         user.setStatus(userCreateRequest.getStatus());
 
         user.setCreatedBy(createdBy);
+        return user;
+    }
+
+    public static User mapUserUpdateRequest(User user, UserUpdateRequest userCreateRequest, String editedBy) {
+
+        user.setEmail(userCreateRequest.getEmail());
+        user.setFirstName(userCreateRequest.getFirstName());
+        user.setLastName(userCreateRequest.getLastName());
+
+        user.setEditedBy(editedBy);
         return user;
     }
 }
