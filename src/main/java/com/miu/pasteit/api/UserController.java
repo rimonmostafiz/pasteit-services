@@ -46,7 +46,7 @@ public class UserController {
     public ResponseEntity<RestResponse<UserModel>> updateUser(HttpServletRequest request,
                                                               @PathVariable Long id,
                                                               @RequestBody UserUpdateRequest userUpdateRequest) {
-        String requestUser = Utils.getUserNameFromRequest(request);
+        String requestUser = Utils.getRequestOwner();
         User user = userService.updateUser(id, userUpdateRequest, requestUser);
         UserModel userModel = UserMapper.mapToUserModel(user);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, userModel);

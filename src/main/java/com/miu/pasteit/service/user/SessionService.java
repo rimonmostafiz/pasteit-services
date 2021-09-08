@@ -31,7 +31,7 @@ public class SessionService implements LogoutHandler {
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String token = request.getHeader(SecurityUtils.AUTHORIZATION_HEADER);
-        String user = JWT.require(Algorithm.HMAC512(jwtSecretKey.getBytes()))
+        String user = JWT.require(Algorithm.HMAC512(SecurityUtils.SECRET_KEY.getBytes()))
                 .build()
                 .verify(token.replace(SecurityUtils.TOKEN_PREFIX, ""))
                 .getSubject();
