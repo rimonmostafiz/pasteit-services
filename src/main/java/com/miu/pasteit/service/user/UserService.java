@@ -11,6 +11,8 @@ import com.miu.pasteit.model.request.UserCreateRequest;
 import com.miu.pasteit.model.request.UserUpdateRequest;
 import com.miu.pasteit.repository.mysql.UserRepository;
 import com.miu.pasteit.repository.mysql.activity.ActivityUserRepository;
+import com.miu.pasteit.service.role.UserRoleService;
+import com.miu.pasteit.utils.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -42,11 +45,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final ActivityUserRepository activityUserRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
+    private final UserRoleService userRoleService;
 
     public User createUser(UserCreateRequest userCreateRequest, String requestUser) {
         String encodedPassword = bCryptPasswordEncoder.encode(userCreateRequest.getPassword());
         User user = UserMapper.mapUserCreateRequest(userCreateRequest, requestUser, encodedPassword);
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.saveAndFlush(user);
+        List<UserRoles> listOfRoles = Collections
+                .singletonList(UserRoles.of(savedUser.getId(), RoleEnum.USER.getRoleId(), RoleEnum.USER.name()));
+        List<UserRoles> userRoles = userRoleService.saveAllRolesForUser(listOfRoles);
+        savedUser.setRoles(userRoles);
 
         ActivityUser activityUser = ActivityUser.of(savedUser, requestUser, ActivityAction.INSERT);
         log.debug("activity User: {}", activityUser);
