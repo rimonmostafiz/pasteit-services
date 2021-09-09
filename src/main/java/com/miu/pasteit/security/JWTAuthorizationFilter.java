@@ -64,7 +64,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private String validateAndExtractSubjectFromToken(String token) {
-        return JWT.require(Algorithm.HMAC512(jwtSecretKey.getBytes()))
+        return JWT.require(Algorithm.HMAC512(SecurityUtils.SECRET_KEY.getBytes()))
                 .build()
                 .verify(token.replace(SecurityUtils.TOKEN_PREFIX, ""))
                 .getSubject();

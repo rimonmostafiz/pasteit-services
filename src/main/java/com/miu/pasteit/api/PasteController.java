@@ -42,7 +42,7 @@ public class PasteController {
     )
     public ResponseEntity<RestResponse<PasteResponse>> createPaste(HttpServletRequest request,
                                                                    @RequestBody @Valid PasteCreateRequest PasteCreateRequest) {
-        String requestUser = Utils.getUserNameFromRequest(request);
+        String requestUser = Utils.getRequestOwner();
         PasteModel Paste = pasteService.createPaste(PasteCreateRequest, requestUser);
         PasteResponse pasteResponse = PasteResponse.of(Paste);
         return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, pasteResponse);
@@ -53,7 +53,7 @@ public class PasteController {
     public ResponseEntity<RestResponse<PasteResponse>> editPaste(HttpServletRequest request,
                                                                  @PathVariable String id,
                                                                  @RequestBody PasteUpdateRequest pasteUpdateRequest) {
-        String requestUser = Utils.getUserNameFromRequest(request);
+        String requestUser = Utils.getRequestOwner();
         PasteModel paste = pasteService.updatePaste(id, pasteUpdateRequest, requestUser);
         PasteResponse pasteResponse = PasteResponse.of(paste);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);
@@ -66,7 +66,7 @@ public class PasteController {
     )
     public ResponseEntity<RestResponse<PasteResponse>> getPaste(HttpServletRequest request, @PathVariable String id) {
         PasteModel paste;
-        final String username = Utils.getUserNameFromRequest(request);
+        final String username = Utils.getRequestOwner();
         final boolean isAdmin = RoleUtils.hasPrivilege(request, RoleUtils.ADMIN_ROLE);
         paste = isAdmin ? pasteService.getPaste(id) : pasteService.getPasteForUser(id, username);
         PasteResponse pasteResponse = PasteResponse.of(paste);
