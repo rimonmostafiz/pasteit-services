@@ -29,6 +29,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableConfigurationProperties
 public class PasteItApplication {
 
+    public static void main(String[] args) {
+        SpringApplication.run(PasteItApplication.class, args);
+    }
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -37,10 +41,6 @@ public class PasteItApplication {
                 registry.addMapping("/pasteit-services").allowedOrigins("http://localhost:3000");
             }
         };
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(PasteItApplication.class, args);
     }
 
 }

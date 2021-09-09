@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * @author Abdi Wako Jilo
+ * @author Rimon Mostafiz
  */
 @Repository
 public interface FeedbackRepository extends MongoRepository<Feedback, String> {

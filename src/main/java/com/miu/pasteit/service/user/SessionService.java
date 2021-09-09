@@ -15,10 +15,9 @@ import java.util.HashSet;
 @Component
 public class SessionService implements LogoutHandler {
 
+    private final HashSet<String> loggedUsers = new HashSet<>();
     @Value("${jwt.secret.key}")
     private String jwtSecretKey;
-
-    private final HashSet<String> loggedUsers = new HashSet<>();
 
     public void addLoggedUser(String token) {
         loggedUsers.add(token);

@@ -18,13 +18,13 @@ import java.time.LocalDateTime;
 @AttributeOverride(name = "version", column = @Column(name = "INTERNAL_VERSION"))
 public abstract class NoSqlActivityCommon extends NoSqlEntityCommon implements Serializable {
 
+    public abstract String getId();
+
     protected String activityUser;
 
     protected int activityAction;
 
     protected LocalDateTime activityTime;
-
-    public abstract String getId();
 
     public static void mapper(NoSqlActivityCommon activity, String activityUser, ActivityAction activityAction) {
         activity.setActivityUser(activityUser);

@@ -5,7 +5,6 @@ import com.miu.pasteit.model.dto.FeedbackModel;
 import com.miu.pasteit.model.request.FeedbackCreateRequest;
 import com.miu.pasteit.model.response.FeedbackResponse;
 import com.miu.pasteit.service.feedback.FeedbackService;
-import com.miu.pasteit.service.paste.PasteService;
 import com.miu.pasteit.utils.ResponseUtils;
 import com.miu.pasteit.utils.Utils;
 import io.swagger.annotations.Api;
@@ -22,6 +21,7 @@ import java.util.List;
 
 /**
  * @author Abdi Wako Jilo
+ * @author Rimon Mostafiz
  */
 @Slf4j
 @RestController
@@ -31,7 +31,6 @@ import java.util.List;
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
-    private final PasteService pasteService;
 
     @PostMapping("/feedback/{id}")
     @ApiOperation(value = "Create Feedback", code = 201)
