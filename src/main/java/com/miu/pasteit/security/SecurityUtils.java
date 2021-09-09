@@ -16,10 +16,12 @@ import java.util.Collections;
 public class SecurityUtils {
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String SIGN_UP_URL = "/v1/api/user/create";
+    public static final String SIGN_UP_URL = "/v1/user";
     public static final String LOGIN_URL = "/v1/api/user/login";
     public static final String HOME_URL = "/v1/home";
     public static final String ISSUER = "auth0";
+    public static final String SECRET_KEY = "SECRET_KEY";
+    public static final Long EXPIRE_DURATION = 900000L;
 
     public static UsernamePasswordAuthenticationToken getUserNamePasswordAuthenticationToken(User user) {
         return new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), Collections.emptyList());

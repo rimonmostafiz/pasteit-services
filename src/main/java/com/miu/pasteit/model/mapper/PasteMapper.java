@@ -8,6 +8,7 @@ import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.PasteCreateRequest;
 import com.miu.pasteit.model.request.PasteUpdateRequest;
+import com.miu.pasteit.utils.Utils;
 
 import java.time.LocalDateTime;
 
@@ -31,14 +32,20 @@ public class PasteMapper {
         return model;
     }
 
-    public static Paste createRequestToEntity(PasteCreateRequest pasteCreateRequest, String createdBy, User user) {
+    public static Paste createRequestToEntity(PasteCreateRequest pasteCreateRequest, String createdBy, User user, String url) {
         Paste entity = new Paste();
 
         entity.setContent(pasteCreateRequest.getContent());
+        entity.setContentHash(Utils.getContentHash(entity.getContent()));
         entity.setTitle(pasteCreateRequest.getTitle());
+        entity.setUrl(url);
         entity.setDescription(pasteCreateRequest.getDescription());
-        entity.setStatus(PasteStatus.getStatus(pasteCreateRequest.getStatus()));
-        entity.setLanguage(Language.getLanguage(pasteCreateRequest.getLanguage()));
+        entity.setStatus(pasteCreateRequest.getStatus() == null
+                ? PasteStatus.PUBLIC
+                : PasteStatus.getStatus(pasteCreateRequest.getStatus()));
+        entity.setLanguage(pasteCreateRequest.getLanguage() == null
+                ? Language.NONE
+                : Language.getLanguage(pasteCreateRequest.getLanguage()));
         entity.setPasteUser(user.getId());
         entity.setFolder(pasteCreateRequest.getFolder());
         entity.setPasteDateTime(LocalDateTime.now());

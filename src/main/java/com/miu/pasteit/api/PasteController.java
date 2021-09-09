@@ -8,7 +8,6 @@ import com.miu.pasteit.model.request.PasteUpdateRequest;
 import com.miu.pasteit.model.response.PasteResponse;
 import com.miu.pasteit.service.paste.PasteService;
 import com.miu.pasteit.utils.ResponseUtils;
-import com.miu.pasteit.utils.RoleUtils;
 import com.miu.pasteit.utils.Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,13 +35,10 @@ public class PasteController {
     private final PasteService pasteService;
 
     @PostMapping("/paste")
-    @ApiOperation(
-            value = "Create Paste",
-            code = 201
-    )
+    @ApiOperation(value = "Create Paste", code = 201)
     public ResponseEntity<RestResponse<PasteResponse>> createPaste(HttpServletRequest request,
                                                                    @RequestBody @Valid PasteCreateRequest PasteCreateRequest) {
-        String requestUser = Utils.getUserNameFromRequest(request);
+        String requestUser = Utils.getRequestOwner();
         PasteModel Paste = pasteService.createPaste(PasteCreateRequest, requestUser);
         PasteResponse pasteResponse = PasteResponse.of(Paste);
         return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, pasteResponse);
@@ -53,7 +49,7 @@ public class PasteController {
     public ResponseEntity<RestResponse<PasteResponse>> editPaste(HttpServletRequest request,
                                                                  @PathVariable String id,
                                                                  @RequestBody PasteUpdateRequest pasteUpdateRequest) {
-        String requestUser = Utils.getUserNameFromRequest(request);
+        String requestUser = Utils.getRequestOwner();
         PasteModel paste = pasteService.updatePaste(id, pasteUpdateRequest, requestUser);
         PasteResponse pasteResponse = PasteResponse.of(paste);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);
@@ -65,10 +61,9 @@ public class PasteController {
             notes = "Need to pass valid Paste id to get details of the Paste"
     )
     public ResponseEntity<RestResponse<PasteResponse>> getPaste(HttpServletRequest request, @PathVariable String id) {
-        PasteModel paste;
-        final String username = Utils.getUserNameFromRequest(request);
-        final boolean isAdmin = RoleUtils.hasPrivilege(request, RoleUtils.ADMIN_ROLE);
-        paste = isAdmin ? pasteService.getPaste(id) : pasteService.getPasteForUser(id, username);
+        final String username = Utils.getRequestOwner();
+        //final boolean isAdmin = RoleUtils.hasPrivilege(request, RoleUtils.ADMIN_ROLE);
+        PasteModel paste = pasteService.getPasteForUser(id, username);
         PasteResponse pasteResponse = PasteResponse.of(paste);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);
     }
@@ -100,8 +95,8 @@ public class PasteController {
             notes = "An ADMIN User has the privilege to call this API"
     )
     public ResponseEntity<RestResponse<PasteResponse>> searchAllByUser(@PathVariable Long userId) {
-        List<PasteModel> Pastes = pasteService.getAllPasteByUser(userId);
-        PasteResponse pasteResponse = PasteResponse.of(Pastes);
+        List<PasteModel> pastes = pasteService.getAllPasteByUser(userId);
+        PasteResponse pasteResponse = PasteResponse.of(pastes);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);
     }
 }
