@@ -1,8 +1,9 @@
 package com.miu.pasteit.api;
 
 import com.miu.pasteit.model.common.RestResponse;
-import com.miu.pasteit.model.entity.db.nosql.Feedback;
+import com.miu.pasteit.model.dto.FeedbackModel;
 import com.miu.pasteit.model.request.FeedbackCreateRequest;
+import com.miu.pasteit.model.response.FeedbackResponse;
 import com.miu.pasteit.service.feedback.FeedbackService;
 import com.miu.pasteit.service.paste.PasteService;
 import com.miu.pasteit.utils.ResponseUtils;
@@ -33,16 +34,14 @@ public class FeedbackController {
     private final PasteService pasteService;
 
     @PostMapping("/feedback/{id}")
-    @ApiOperation(
-            value = "Create Feedback",
-            code = 201
-    )
-    public ResponseEntity<RestResponse<List<Feedback>>> createPaste(HttpServletRequest request,
+    @ApiOperation(value = "Create Feedback", code = 201)
+    public ResponseEntity<RestResponse<FeedbackResponse>> createPaste(HttpServletRequest request,
                                                                       @PathVariable String id,
                                                                       @RequestBody @Valid FeedbackCreateRequest feedbackCreateRequest) {
-        String requestUser = Utils.getUserNameFromRequest(request);
-        List<Feedback> feedback = feedbackService.createFeedback(id, feedbackCreateRequest, requestUser);
-        return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, feedback);
+        String requestUser = Utils.getRequestOwner();
+        List<FeedbackModel> feedbacks = feedbackService.createFeedback(id, feedbackCreateRequest, requestUser);
+        FeedbackResponse feedbackResponse = FeedbackResponse.of(feedbacks);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, feedbackResponse);
     }
 
 }

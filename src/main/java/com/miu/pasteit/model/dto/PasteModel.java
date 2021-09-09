@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Rimon Mostafiz
@@ -42,4 +43,6 @@ public class PasteModel {
     private LocalDateTime pasteDateTime;
 
     private String share;
+
+    private List<FeedbackModel> feedbacks;
 }

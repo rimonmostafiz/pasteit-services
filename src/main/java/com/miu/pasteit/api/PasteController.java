@@ -55,15 +55,15 @@ public class PasteController {
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);
     }
 
-    @GetMapping("/paste/{id}")
+    @GetMapping("/paste/{url}")
     @ApiOperation(
             value = "Get Paste By ID",
             notes = "Need to pass valid Paste id to get details of the Paste"
     )
-    public ResponseEntity<RestResponse<PasteResponse>> getPaste(HttpServletRequest request, @PathVariable String id) {
+    public ResponseEntity<RestResponse<PasteResponse>> getPaste(HttpServletRequest request, @PathVariable String url) {
         final String username = Utils.getRequestOwner();
         //final boolean isAdmin = RoleUtils.hasPrivilege(request, RoleUtils.ADMIN_ROLE);
-        PasteModel paste = pasteService.getPasteForUser(id, username);
+        PasteModel paste = pasteService.getPasteForUser(url, username);
         PasteResponse pasteResponse = PasteResponse.of(paste);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);
     }

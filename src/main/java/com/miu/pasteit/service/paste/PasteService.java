@@ -2,17 +2,20 @@ package com.miu.pasteit.service.paste;
 
 import com.miu.pasteit.component.exception.EntityNotFoundException;
 import com.miu.pasteit.component.exception.ValidationException;
+import com.miu.pasteit.model.dto.FeedbackModel;
 import com.miu.pasteit.model.dto.PasteModel;
 import com.miu.pasteit.model.entity.activity.nosql.ActivityPaste;
 import com.miu.pasteit.model.entity.common.ActivityAction;
 import com.miu.pasteit.model.entity.common.PasteStatus;
 import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
+import com.miu.pasteit.model.mapper.FeedbackMapper;
 import com.miu.pasteit.model.mapper.PasteMapper;
 import com.miu.pasteit.model.request.PasteCreateRequest;
 import com.miu.pasteit.model.request.PasteUpdateRequest;
 import com.miu.pasteit.repository.mongo.PasteRepository;
 import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
+import com.miu.pasteit.service.feedback.FeedbackService;
 import com.miu.pasteit.service.user.UserService;
 import com.miu.pasteit.utils.UrlGenerationUtil;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +50,7 @@ public class PasteService {
     private final UserService userservice;
     private final PasteRepository pasteRepository;
     private final ActivityPasteRepository activityPasteRepository;
+    private final FeedbackService feedbackService;
 
     @Retryable(value = RuntimeException.class, maxAttempts = 10)
     public PasteModel createPaste(PasteCreateRequest PasteCreateRequest, String requestUser) {
@@ -69,15 +73,23 @@ public class PasteService {
                 .orElseThrow(pasteNotFound);
     }
 
-    public PasteModel getPasteForUser(String id, String username) {
+    public PasteModel getPasteForUser(String url, String username) {
         Predicate<Paste> isOwnPaste = Paste -> Paste.getCreatedBy().equals(username);
         Predicate<Paste> isPastePublic = paste -> paste.getStatus() == PasteStatus.PUBLIC;
 
-        return Optional.of(pasteRepository.findById(id))
+        PasteModel pasteModel = Optional.of(pasteRepository.findByUrl(url))
                 .orElseThrow(pasteNotFound)
                 .filter(isOwnPaste.or(isPastePublic))
                 .map(PasteMapper::mapper)
                 .orElseThrow(notOwnPaste);
+
+        List<FeedbackModel> feedbacks = feedbackService.getAllFeedbackForPaste(pasteModel.getId())
+                .stream()
+                .map(FeedbackMapper::mapper)
+                .collect(Collectors.toList());
+
+        pasteModel.setFeedbacks(feedbacks);
+        return pasteModel;
     }
 
     public List<PasteModel> getAllPastes() {

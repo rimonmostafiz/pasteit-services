@@ -15,8 +15,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FeedbackModel {
-    private Long id;
+    private String id;
     private String comment;
     private LocalDateTime dateTime;
-    private UserModel user;
+    private String pasteId;
+    private Long userId;
+    private String userName;
 }
