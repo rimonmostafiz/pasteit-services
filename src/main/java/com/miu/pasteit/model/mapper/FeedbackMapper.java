@@ -18,7 +18,8 @@ public class FeedbackMapper {
         model.setId(entity.getId());
         model.setComment(entity.getComment());
         model.setDateTime(entity.getDateTime());
-        model.setUser(UserMapper.mapperForInternal(entity.getUser()));
+        model.setUserId(entity.getUserId());
+        model.setUserName(entity.getUserName());
         return model;
     }
 
@@ -26,7 +27,7 @@ public class FeedbackMapper {
         Feedback entity = new Feedback();
 
         entity.setComment(feedbackCreateRequest.getComment());
-        entity.setUser(user);
+        entity.setUserId(user.getId());
         entity.setDateTime(LocalDateTime.now());
 
         entity.setCreatedBy(createdBy);
@@ -39,7 +40,8 @@ public class FeedbackMapper {
             entity.setComment(feedbackEditRequest.getComment());
         }
         if (user != null) {
-            entity.setUser(user);
+            entity.setUserName(user.getUsername());
+            entity.setUserId(user.getId());
         }
         entity.setDateTime(LocalDateTime.now());
         entity.setCreatedBy(createdBy);
