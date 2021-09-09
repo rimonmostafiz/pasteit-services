@@ -2,6 +2,7 @@ package com.miu.pasteit.model.mapper;
 
 import com.miu.pasteit.model.dto.FeedbackModel;
 import com.miu.pasteit.model.entity.db.nosql.Feedback;
+import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.FeedbackCreateRequest;
 import com.miu.pasteit.model.request.FeedbackEditRequest;
@@ -23,12 +24,14 @@ public class FeedbackMapper {
         return model;
     }
 
-    public static Feedback createRequestToEntity(FeedbackCreateRequest feedbackCreateRequest, String createdBy, User user) {
+    public static Feedback createRequestToEntity(FeedbackCreateRequest feedbackCreateRequest, String createdBy, User user, Paste paste) {
         Feedback entity = new Feedback();
 
         entity.setComment(feedbackCreateRequest.getComment());
-        entity.setUserId(user.getId());
         entity.setDateTime(LocalDateTime.now());
+        entity.setUserId(user.getId());
+        entity.setUserName(user.getUsername());
+        entity.setPasteId(paste.getId());
 
         entity.setCreatedBy(createdBy);
         return entity;

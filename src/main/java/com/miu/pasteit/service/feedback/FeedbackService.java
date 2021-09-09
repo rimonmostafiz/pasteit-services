@@ -2,12 +2,12 @@ package com.miu.pasteit.service.feedback;
 
 import com.miu.pasteit.component.exception.EntityNotFoundException;
 import com.miu.pasteit.component.exception.ValidationException;
+import com.miu.pasteit.model.dto.FeedbackModel;
 import com.miu.pasteit.model.entity.common.PasteStatus;
 import com.miu.pasteit.model.entity.db.nosql.Feedback;
 import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.mapper.FeedbackMapper;
-import com.miu.pasteit.model.mapper.PasteMapper;
 import com.miu.pasteit.model.request.FeedbackCreateRequest;
 import com.miu.pasteit.repository.mongo.FeedbackRepository;
 import com.miu.pasteit.repository.mongo.PasteRepository;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * @author Abdi Wako Jilo
@@ -34,20 +35,19 @@ public class FeedbackService {
     private final PasteRepository pasteRepository;
     private final FeedbackRepository feedbackRepository;
 
-    public List<Feedback> createFeedback(String id, FeedbackCreateRequest feedbackCreateRequest, String requestUser) {
+    public List<FeedbackModel> createFeedback(String id, FeedbackCreateRequest feedbackCreateRequest, String requestUser) {
         User user = userservice.getUserByUsername(requestUser);
-        Feedback feedback = FeedbackMapper.createRequestToEntity(feedbackCreateRequest, requestUser, user);
-
         Paste paste = pasteRepository.findById(id).orElseThrow(pasteNotFound);
         if (paste.getStatus() == PasteStatus.DELETED) {
             throw new ValidationException(HttpStatus.BAD_REQUEST, "status", "error.paste.status.deleted.not.editable");
         }
 
-        PasteMapper.addFeedbackToEntity(paste, feedback, requestUser, paste.getPasteUser());
-
-        Paste savedPaste = pasteRepository.save(paste);
-
-        return feedbackRepository.findAllByUser(user);
+        Feedback feedback = FeedbackMapper.createRequestToEntity(feedbackCreateRequest, requestUser, user, paste);
+        Feedback savedFeedback = feedbackRepository.save(feedback);
+        return feedbackRepository.findAllByPasteId(paste.getId())
+                .stream()
+                .map(FeedbackMapper::mapper)
+                .collect(Collectors.toList());
     }
 
     public List<Feedback> getAllFeedbackForPaste(String pasteId) {

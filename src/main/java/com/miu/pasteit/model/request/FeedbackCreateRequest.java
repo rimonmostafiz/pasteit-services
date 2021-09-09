@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author Abdi Wako Jilo
@@ -16,6 +15,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FeedbackCreateRequest implements Serializable {
-
     private String comment;
 }
