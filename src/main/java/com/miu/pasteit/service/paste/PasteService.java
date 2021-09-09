@@ -39,7 +39,7 @@ public class PasteService {
     public static final Supplier<EntityNotFoundException> pasteNotFound = () ->
             new EntityNotFoundException(HttpStatus.BAD_REQUEST, "pasteId", "error.paste.not.found");
     public static final Supplier<ValidationException> notOwnPaste = () ->
-            new ValidationException(HttpStatus.UNAUTHORIZED, "pasteId", "error.paste.user.not.authorized");
+            new ValidationException(HttpStatus.UNAUTHORIZED, "pasteId", "error.paste.not.public.or.user.not.authorized");
     public static final Consumer<Paste> urlAlreadyExists = (paste) -> {
         throw new RuntimeException(String.format("Generated URL [%s] already exists for pasteId [%s]", paste.getUrl(), paste.getId()));
     };
@@ -71,10 +71,11 @@ public class PasteService {
 
     public PasteModel getPasteForUser(String id, String username) {
         Predicate<Paste> isOwnPaste = Paste -> Paste.getCreatedBy().equals(username);
+        Predicate<Paste> isPastePublic = paste -> paste.getStatus() == PasteStatus.PUBLIC;
 
         return Optional.of(pasteRepository.findById(id))
                 .orElseThrow(pasteNotFound)
-                .filter(isOwnPaste)
+                .filter(isOwnPaste.or(isPastePublic))
                 .map(PasteMapper::mapper)
                 .orElseThrow(notOwnPaste);
     }
@@ -87,22 +88,17 @@ public class PasteService {
     }
 
     public List<PasteModel> getAllPasteByUser(Long userId) {
-        List<Paste> Pastes = userservice.findById(userId)
+        return userservice.findById(userId)
                 .map(user -> pasteRepository.findAllByPasteUser(user.getId()))
-                .orElseThrow(UserService.userNotFound);
-
-        return Pastes.stream()
+                .orElseThrow(UserService.userNotFound)
+                .stream()
                 .map(PasteMapper::mapper)
                 .collect(Collectors.toList());
     }
 
-    public List<Paste> findAllByLanguage(String Language) {
-        return null;
-    }
-
-    public List<PasteModel> getAllPasteByProject(Long projectId) {
-        return null;
-    }
+//    public List<Paste> findAllByLanguage(String Language) {
+//        return null;
+//    }
 
     public List<PasteModel> getAllExpiredPaste() {
         return null;
@@ -116,7 +112,8 @@ public class PasteService {
     }
 
     public void deletePaste(String id, String requestUser) {
-        Function<Paste, ActivityPaste> mapToActivity = Paste -> ActivityPaste.of(Paste, requestUser, ActivityAction.DELETE);
+        Function<Paste, ActivityPaste> mapToActivity = paste ->
+                ActivityPaste.of(paste, requestUser, ActivityAction.DELETE);
 
         ActivityPaste activityPaste = pasteRepository.findById(id)
                 .map(mapToActivity)
