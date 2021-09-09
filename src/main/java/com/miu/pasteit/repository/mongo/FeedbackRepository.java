@@ -13,4 +13,7 @@ import java.util.List;
 @Repository
 public interface FeedbackRepository extends MongoRepository<Feedback, String> {
     List<Feedback> findAllByUser(User user);
+
+    List<Feedback> findAllByPasteId(String pasteId);
+
 }

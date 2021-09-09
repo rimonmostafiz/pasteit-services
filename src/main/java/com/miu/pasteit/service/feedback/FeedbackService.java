@@ -11,7 +11,6 @@ import com.miu.pasteit.model.mapper.PasteMapper;
 import com.miu.pasteit.model.request.FeedbackCreateRequest;
 import com.miu.pasteit.repository.mongo.FeedbackRepository;
 import com.miu.pasteit.repository.mongo.PasteRepository;
-import com.miu.pasteit.service.paste.PasteService;
 import com.miu.pasteit.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,6 @@ public class FeedbackService {
     public static final Supplier<ValidationException> notOwnPaste = () -> new ValidationException(HttpStatus.UNAUTHORIZED, "pasteId", "error.paste.user.not.authorized");
 
     private final UserService userservice;
-    private final PasteService pasteService;
     private final PasteRepository pasteRepository;
     private final FeedbackRepository feedbackRepository;
 
@@ -50,6 +48,10 @@ public class FeedbackService {
         Paste savedPaste = pasteRepository.save(paste);
 
         return feedbackRepository.findAllByUser(user);
+    }
+
+    public List<Feedback> getAllFeedbackForPaste(String pasteId) {
+        return feedbackRepository.findAllByPasteId(pasteId);
     }
 
 }
