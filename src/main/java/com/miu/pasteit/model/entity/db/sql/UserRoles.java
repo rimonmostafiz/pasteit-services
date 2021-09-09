@@ -31,12 +31,4 @@ public class UserRoles extends EntityCommon {
 
     @Column(name = "ROLE_NAME")
     private String roleName;
-
-    public static UserRoles of(Long userId, Long roleId, String roleName) {
-        UserRoles userRoles = new UserRoles();
-        userRoles.setUserId(userId);
-        userRoles.setRoleId(roleId);
-        userRoles.setRoleName(roleName);
-        return userRoles;
-    }
 }

@@ -7,6 +7,7 @@ import com.miu.pasteit.model.entity.common.Status;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.entity.db.sql.UserRoles;
 import com.miu.pasteit.model.mapper.UserMapper;
+import com.miu.pasteit.model.mapper.UserRoleMapper;
 import com.miu.pasteit.model.request.UserCreateRequest;
 import com.miu.pasteit.model.request.UserUpdateRequest;
 import com.miu.pasteit.repository.mysql.UserRepository;
@@ -52,7 +53,10 @@ public class UserService {
         User user = UserMapper.mapUserCreateRequest(userCreateRequest, requestUser, encodedPassword);
         User savedUser = userRepository.saveAndFlush(user);
         List<UserRoles> listOfRoles = Collections
-                .singletonList(UserRoles.of(savedUser.getId(), RoleEnum.USER.getRoleId(), RoleEnum.USER.name()));
+                .singletonList(UserRoleMapper
+                        .createEntity(savedUser.getId(), RoleEnum.USER.getRoleId(), RoleEnum.USER.name()
+                        )
+                );
         List<UserRoles> userRoles = userRoleService.saveAllRolesForUser(listOfRoles);
         savedUser.setRoles(userRoles);
 
