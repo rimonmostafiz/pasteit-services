@@ -13,7 +13,7 @@ public enum Language {
 
     public static Language getLanguage(String language) {
         return Arrays.stream(Language.values())
-                .filter(v -> v.name().equals(language))
+                .filter(v -> v.name().equalsIgnoreCase(language))
                 .findFirst()
                 .orElseThrow(() -> new ValidationException(HttpStatus.BAD_REQUEST, "status", "error.language.invalid.status"));
     }

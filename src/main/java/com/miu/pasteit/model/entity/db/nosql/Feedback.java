@@ -1,12 +1,11 @@
 package com.miu.pasteit.model.entity.db.nosql;
 
-import com.miu.pasteit.model.entity.common.EntityCommon;
+import com.miu.pasteit.model.entity.common.NoSqlEntityCommon;
 import com.miu.pasteit.model.entity.db.sql.User;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 
 /**
@@ -18,19 +17,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(staticName = "of")
 @Document("FEEDBACK")
 @EqualsAndHashCode(callSuper = true)
-public class Feedback extends EntityCommon {
+public class Feedback extends NoSqlEntityCommon {
 
     @Id
-    private Long id;
+    private String id;
     private String comment;
     private LocalDateTime dateTime;
+    private String pasteId;
+    private Long userId;
+    private String userName;
 
-    @OneToMany
-    private User user;
-
-    public Feedback(String comment, LocalDateTime dateTime, User user) {
+    public Feedback(String comment, LocalDateTime dateTime, User user, Paste paste) {
         this.comment = comment;
         this.dateTime = dateTime;
-        this.user = user;
+        this.pasteId = paste.getId();
+        this.userId = user.getId();
+        this.userName = getUserName();
     }
 }
