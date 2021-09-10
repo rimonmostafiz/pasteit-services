@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author Rimon Mostafiz
@@ -38,9 +38,11 @@ public class PasteModel {
 
     private LocalDateTime expiryDateTime;
 
-    private UserModel pasteUser;
+    private Long pasteUser;
 
     private LocalDateTime pasteDateTime;
 
     private String share;
+
+    private List<FeedbackModel> feedbacks;
 }

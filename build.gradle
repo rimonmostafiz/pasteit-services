@@ -1,6 +1,10 @@
+import org.flywaydb.gradle.task.FlywayMigrateTask
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
 	id 'org.springframework.boot' version '2.5.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id "org.flywaydb.flyway" version "7.14.1"
 	id 'java'
 }
 
@@ -18,15 +22,42 @@ repositories {
 	mavenCentral()
 }
 
+def activeProfile = project.findProperty("profile") ?: "dev";
+println "Profile: " + activeProfile
+
+bootRun {
+	args = ["--spring.profiles.active=" + activeProfile]
+}
+
+processResources {
+	with copySpec {
+		from "src/main/resources/application.properties"
+		filter(ReplaceTokens, tokens: ["activatedProperties": activeProfile])
+		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	}
+}
+
+clean {
+	delete 'out', '../log'
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'com.auth0:java-jwt:3.18.1'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.13.0-rc2'
 	implementation 'org.apache.commons:commons-lang3:3.12.0'
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+	implementation 'mysql:mysql-connector-java:8.0.26'
+	implementation 'org.flywaydb:flyway-core:7.14.1'
+	implementation 'org.springframework.retry:spring-retry:1.3.1'
+
+
+	runtimeOnly 'com.h2database:h2'
 
 	compileOnly 'org.projectlombok:lombok'
 
@@ -34,8 +65,31 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.0-RC1'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
 
 test {
 	useJUnitPlatform()
+}
+
+flyway {
+	driver='com.mysql.cj.jdbc.Driver'
+	url=project.ext['test.flyway.url']
+	user=project.ext['test.flyway.user']
+	password=project.ext['test.flyway.password']
+}
+
+task flywayMigrateDevDatabase(type: FlywayMigrateTask) {
+	driver='com.mysql.cj.jdbc.Driver'
+	url = project.ext['dev.flyway.url']
+	user = project.ext['dev.flyway.user']
+	password = project.ext['dev.flyway.password']
+}
+
+task flywayMigrateProdDatabase(type: FlywayMigrateTask) {
+	driver='com.mysql.cj.jdbc.Driver'
+	url = project.ext['prod.flyway.url']
+	user = project.ext['prod.flyway.user']
+	password = project.ext['prod.flyway.password']
 }

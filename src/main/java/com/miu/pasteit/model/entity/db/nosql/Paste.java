@@ -1,29 +1,30 @@
-package com.miu.pasteit.model.entity.db;
+package com.miu.pasteit.model.entity.db.nosql;
 
-import com.miu.pasteit.model.entity.common.EntityCommon;
 import com.miu.pasteit.model.entity.common.Language;
+import com.miu.pasteit.model.entity.common.NoSqlEntityCommon;
 import com.miu.pasteit.model.entity.common.PasteStatus;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Rimon Mostafiz
+ * @author Abdi Wako Jilo
  */
 
+@Data
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @Document("PASTE")
-@Data(staticConstructor = "of")
 @EqualsAndHashCode(callSuper = true)
-public class Paste extends EntityCommon {
+public class Paste extends NoSqlEntityCommon {
     @Id
     private String id;
 
@@ -47,10 +48,19 @@ public class Paste extends EntityCommon {
 
     private Long validity;
 
-    //TODO: fetch lazily
-    private User pasteUser;
+    private Long pasteUser;
 
     private LocalDateTime pasteDateTime;
 
     private String share;
+
+    //@OneToMany(cascade = CascadeType.ALL)
+    private List<Feedback> feedback = new ArrayList<>();
+
+    private int likes;
+
+    public void addFeedBack(Feedback feedback){
+        this.feedback.add(feedback);
+    }
+
 }

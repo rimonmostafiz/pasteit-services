@@ -1,15 +1,16 @@
 package com.miu.pasteit.service.user;
 
 import com.miu.pasteit.component.exception.EntityNotFoundException;
-import com.miu.pasteit.model.entity.activity.ActivityUser;
+import com.miu.pasteit.model.entity.activity.sql.ActivityUser;
 import com.miu.pasteit.model.entity.common.ActivityAction;
 import com.miu.pasteit.model.entity.common.Status;
-import com.miu.pasteit.model.entity.db.User;
-import com.miu.pasteit.model.entity.db.UserRoles;
+import com.miu.pasteit.model.entity.db.sql.User;
+import com.miu.pasteit.model.entity.db.sql.UserRoles;
 import com.miu.pasteit.model.mapper.UserMapper;
 import com.miu.pasteit.model.request.UserCreateRequest;
-import com.miu.pasteit.repository.UserRepository;
-import com.miu.pasteit.repository.activity.ActivityUserRepository;
+import com.miu.pasteit.model.request.UserUpdateRequest;
+import com.miu.pasteit.repository.mysql.UserRepository;
+import com.miu.pasteit.repository.mysql.activity.ActivityUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -39,11 +40,12 @@ public class UserService {
     public static final Supplier<DisabledException> userIsDisabled = () ->
             new DisabledException("error.user.is.disabled");
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final ActivityUserRepository activityUserRepository;
+    private final PasswordEncoder bCryptPasswordEncoder;
 
     public User createUser(UserCreateRequest userCreateRequest, String requestUser) {
-        User user = UserMapper.mapUserCreateRequest(userCreateRequest, requestUser, passwordEncoder);
+        String encodedPassword = bCryptPasswordEncoder.encode(userCreateRequest.getPassword());
+        User user = UserMapper.mapUserCreateRequest(userCreateRequest, requestUser, encodedPassword);
         User savedUser = userRepository.save(user);
 
         ActivityUser activityUser = ActivityUser.of(savedUser, requestUser, ActivityAction.INSERT);
@@ -53,7 +55,7 @@ public class UserService {
         return savedUser;
     }
 
-    public Optional<User> findById(String id) {
+    public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -73,5 +75,18 @@ public class UserService {
                 .stream()
                 .map(UserRoles::getRoleName)
                 .collect(Collectors.toList());
+    }
+
+    public User updateUser(Long id, UserUpdateRequest userUpdateRequest, String requestUser) {
+        User savedUser = this.findById(id)
+                .map(user -> UserMapper.mapUserUpdateRequest(user, userUpdateRequest, requestUser))
+                .map(userRepository::saveAndFlush)
+                .orElseThrow(userNotFound);
+
+        ActivityUser activityUser = ActivityUser.of(savedUser, requestUser, ActivityAction.UPDATE);
+        log.debug("activity User: {}", activityUser);
+        activityUserRepository.save(activityUser);
+
+        return savedUser;
     }
 }
