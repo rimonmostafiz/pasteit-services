@@ -44,17 +44,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         http.formLogin()
-                .loginProcessingUrl("/login")
+                .loginProcessingUrl(SecurityUtils.LOGIN_PRECESSING_URL)
                 .and()
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutUrl(SecurityUtils.LOGOUT_URL)
                         .addLogoutHandler(sessionService)
                 );
 
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST, SecurityUtils.SIGN_UP_URL).permitAll()
-                .anyRequest().authenticated().
-                and().addFilter(new JWTAuthenticationFilter(authenticationManager(), sessionService))
+                .antMatchers(HttpMethod.GET, SecurityUtils.GET_PASTE_URL).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilter(new JWTAuthenticationFilter(authenticationManager(), sessionService))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), sessionService));
 
         http.exceptionHandling()
