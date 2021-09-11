@@ -61,7 +61,6 @@ public class UserService {
         savedUser.setRoles(userRoles);
 
         ActivityUser activityUser = ActivityUser.of(savedUser, requestUser, ActivityAction.INSERT);
-        log.debug("activity User: {}", activityUser);
         activityUserRepository.save(activityUser);
 
         return savedUser;
