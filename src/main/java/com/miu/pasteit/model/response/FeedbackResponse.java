@@ -2,7 +2,6 @@ package com.miu.pasteit.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.miu.pasteit.model.dto.FeedbackModel;
-import com.miu.pasteit.model.dto.PasteModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
