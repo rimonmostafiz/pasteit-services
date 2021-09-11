@@ -6,9 +6,13 @@ import java.util.Random;
  * @author Rimon Mostafiz
  */
 public class UrlGenerationUtil {
-    private final Random random = new Random();
     public static final Integer URL_LEN = 6;
     public static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private final Random random = new Random();
+
+    public static UrlGenerationUtil getInstance() {
+        return UrlGenerator.KLASS;
+    }
 
     public String generateRandomURL() {
         StringBuilder urlBuilder = new StringBuilder();
@@ -21,9 +25,5 @@ public class UrlGenerationUtil {
 
     private static class UrlGenerator {
         private static final UrlGenerationUtil KLASS = new UrlGenerationUtil();
-    }
-
-    public static UrlGenerationUtil getInstance() {
-        return UrlGenerator.KLASS;
     }
 }

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 /**
  * @author Abdi Wako Jilo
+ * @author Rimon Mostafiz
  */
 public class FeedbackMapper {
 
