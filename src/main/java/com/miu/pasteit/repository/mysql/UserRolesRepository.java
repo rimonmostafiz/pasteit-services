@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * @author Rimon Mostafiz
  */
 @Repository
-public interface UserRolesRepository extends JpaRepository<UserRoles, String> {
+public interface UserRolesRepository extends JpaRepository<UserRoles, Long> {
 }
