@@ -1,49 +1,74 @@
-package com.miu.pasteit.service.paste;
+package com.miu.pasteit;
 
 import com.miu.pasteit.model.dto.PasteModel;
-import com.miu.pasteit.model.dto.UserModel;
-import com.miu.pasteit.model.entity.activity.ActivityPaste;
+
 import com.miu.pasteit.model.entity.common.Language;
 import com.miu.pasteit.model.entity.common.PasteStatus;
-import com.miu.pasteit.model.request.PasteCreateRequest;
-import com.miu.pasteit.repository.PasteRepository;
+import com.miu.pasteit.model.entity.db.nosql.Paste;
+
+import com.miu.pasteit.repository.mongo.PasteRepository;
+import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
+import com.miu.pasteit.service.paste.PasteService;
+import com.miu.pasteit.service.user.UserService;
+import org.aspectj.lang.annotation.Before;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+
+import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.mockito.BDDMockito.given;
 
 class PasteServiceTest {
+    @Mock
+    PasteRepository pasteRepository;
 
-    @Autowired
-    private PasteService pasteService;
+    @Mock
+    UserService userservice;
 
-    @MockBean
-    private ActivityPaste pasteModel;
+    @Mock
+    ActivityPasteRepository activitypasterepository;
 
-    @Test
-    void createPaste() {
+    @InjectMocks
+    PasteService pasteService;
+
+    @BeforeEach
+
+    public void setUp(){
+        MockitoAnnotations.openMocks(this);
 
     }
 
+    @Before("")
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+    }
     @Test
-    void getPaste() {
-        LocalDateTime now=LocalDateTime.now();
-        LocalDateTime expire=now.plusDays(2);
-        PasteModel paste= new PasteModel();
-        paste.setId("123");
-        paste.setTitle("Java Code");
-        paste.setUrl("http://lcoalhost");
-        paste.setContent("public static int=10;");
-        paste.setPasteDateTime(now);
-        paste.setExpiryDateTime(expire);
-        paste.setPasteUser(new UserModel());
-        paste.setShare("public");
+    void getAllPasteByStatus() throws Exception{
+        Paste paste= Paste.of("1111","int var=11;","hashc","java code",
+                "http://lcoalost","detail code",PasteStatus.PRIVATE,Language.JAVA,
+                "C:/", 100L,1111L,LocalDateTime.now(),"public",null,1);
+        Paste paste1=Paste.of("2222","int var=22;","hashc","java code",
+                "http://lcoalost","detail code",PasteStatus.PUBLIC,Language.JAVA,
+                "C:/", 100L,1111L,LocalDateTime.now(),"public",null,2);
+        Paste paste2=Paste.of("2222","int var=22;","hashc","java code",
+                "http://lcoalost","detail code",PasteStatus.PRIVATE,Language.JAVA,
+                "C:/", 100L,1111L,LocalDateTime.now(),"public",null,1);
+        List<Paste> pastePublic= new LinkedList<>();
+        pastePublic.add(paste);pastePublic.add(paste1);pastePublic.add(paste2);
 
-        Mockito.when(pasteModel.getId()).thenReturn(paste.getId());
-        assertEquals(pasteService.getPaste("123").getId(),paste.getId());
+        given(pasteRepository.findAllByStatus(PasteStatus.PUBLIC)).willReturn(List.of(paste,paste2));
+        List<PasteModel> result =  pasteService.getAllPasteByStatus(PasteStatus.PUBLIC);
+
+        Assertions.assertThat(result.size()).isEqualTo(2);
+
+
     }
 }
