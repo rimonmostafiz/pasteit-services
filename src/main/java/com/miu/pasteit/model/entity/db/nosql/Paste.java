@@ -59,7 +59,7 @@ public class Paste extends NoSqlEntityCommon {
 
     private int likes;
 
-    public void addFeedBack(Feedback feedback){
+    public void addFeedBack(Feedback feedback) {
         this.feedback.add(feedback);
     }
 

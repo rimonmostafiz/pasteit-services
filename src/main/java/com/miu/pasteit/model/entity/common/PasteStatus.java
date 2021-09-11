@@ -26,6 +26,6 @@ public enum PasteStatus {
                 .findFirst();
 
         return optTaskStatus.orElseThrow(() ->
-                new ValidationException(HttpStatus.BAD_REQUEST, "status", "invalid.task.status"));
+                new ValidationException(HttpStatus.BAD_REQUEST, "status", "invalid.paste.status"));
     }
 }
