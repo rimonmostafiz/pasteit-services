@@ -1,10 +1,10 @@
 package com.miu.pasteit.config;
 
+import com.miu.pasteit.security.SecurityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,7 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @EnableRetry
-@PropertySource("classpath:application.properties")
 public class AppConfig {
 
     @Value("${server.servlet.context-path}")
@@ -45,7 +44,7 @@ public class AppConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping(contextPath).allowedOrigins(corsOriginAllowedUrl);
+                registry.addMapping(SecurityUtils.contextPath).allowedOrigins(SecurityUtils.corsOriginAllowedUrl);
             }
         };
     }
