@@ -24,6 +24,7 @@ public class SecurityUtils {
     public static final Long EXPIRE_DURATION = 900000L;
     public static final String corsOriginAllowedUrl = "http://localhost:3000";
     public static final String contextPath = "/**";
+    public static final String ROLE = "role";
 
     public static UsernamePasswordAuthenticationToken getUserNamePasswordAuthenticationToken(User user) {
         return new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), Collections.emptyList());
