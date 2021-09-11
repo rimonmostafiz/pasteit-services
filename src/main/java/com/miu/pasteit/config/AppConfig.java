@@ -1,7 +1,6 @@
 package com.miu.pasteit.config;
 
 import com.miu.pasteit.security.SecurityUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,12 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableRetry
 public class AppConfig {
-
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
-
-    @Value("${cors.origin.allowed.url}")
-    private String corsOriginAllowedUrl;
 
     @Bean
     public MessageSource messageSource() {

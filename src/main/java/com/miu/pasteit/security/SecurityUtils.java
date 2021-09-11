@@ -23,7 +23,7 @@ public class SecurityUtils {
     public static final String SECRET_KEY = "SECRET_KEY";
     public static final Long EXPIRE_DURATION = 900000L;
     public static final String corsOriginAllowedUrl = "http://localhost:3000";
-    public static final String contextPath = "/pasteit-services";
+    public static final String contextPath = "/**";
 
     public static UsernamePasswordAuthenticationToken getUserNamePasswordAuthenticationToken(User user) {
         return new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), Collections.emptyList());
