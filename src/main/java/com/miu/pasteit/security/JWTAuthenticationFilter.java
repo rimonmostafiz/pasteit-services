@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Optional;
 
 import static com.miu.pasteit.security.SecurityUtils.getUserNamePasswordAuthenticationToken;
 
@@ -56,9 +58,18 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String token = JWT.create()
                 .withSubject(auth.getName())
+                .withClaim(SecurityUtils.ROLE, getAuthority((org.springframework.security.core.userdetails.User) auth.getPrincipal()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + SecurityUtils.EXPIRE_DURATION))
                 .sign(Algorithm.HMAC512(SecurityUtils.SECRET_KEY.getBytes()));
         res.addHeader(SecurityUtils.AUTHORIZATION_HEADER, SecurityUtils.TOKEN_PREFIX + token);
         sessionService.addLoggedUser(auth.getName());
+    }
+
+    private String getAuthority(org.springframework.security.core.userdetails.User principal) {
+        Optional<GrantedAuthority> any = principal.getAuthorities().stream().findAny();
+        if (any.isPresent()) {
+            return any.get().getAuthority();
+        }
+        return "";
     }
 }

@@ -60,6 +60,6 @@ public class User extends EntityCommon {
     private Status status;
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ROLE_ID")
+    @JoinColumn(name = "USER_ID")
     private List<UserRoles> roles = new ArrayList<>();
 }
