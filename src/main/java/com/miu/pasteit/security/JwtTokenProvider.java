@@ -70,7 +70,7 @@ public class JwtTokenProvider {
     public String getUsername(String token) {
         try {
             JWTVerifier verifier = JWT.require(this.getAlgorithm())
-                    .withIssuer(new String[]{SecurityUtils.ISSUER})
+                    .withIssuer(SecurityUtils.ISSUER)
                     .build();
             DecodedJWT jwt = verifier.verify(token);
             return jwt.getSubject();
@@ -91,7 +91,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             JWTVerifier verifier = JWT.require(this.getAlgorithm())
-                    .withIssuer(new String[]{SecurityUtils.ISSUER})
+                    .withIssuer(SecurityUtils.ISSUER)
                     .build();
             verifier.verify(token);
             return true;
