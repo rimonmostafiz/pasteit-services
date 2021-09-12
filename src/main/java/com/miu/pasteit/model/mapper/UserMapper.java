@@ -1,6 +1,7 @@
 package com.miu.pasteit.model.mapper;
 
 import com.miu.pasteit.model.dto.UserModel;
+import com.miu.pasteit.model.entity.common.Status;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.UserCreateRequest;
 import com.miu.pasteit.model.request.UserUpdateRequest;
@@ -8,6 +9,7 @@ import com.miu.pasteit.model.request.UserUpdateRequest;
 
 /**
  * @author Rimon Mostafiz
+ * @author Abdi Wako Jilo
  */
 public class UserMapper {
 
@@ -37,7 +39,7 @@ public class UserMapper {
         user.setEmail(userCreateRequest.getEmail());
         user.setFirstName(userCreateRequest.getFirstName());
         user.setLastName(userCreateRequest.getLastName());
-        user.setStatus(userCreateRequest.getStatus());
+        user.setStatus(Status.ACTIVE);
 
         user.setCreatedBy(createdBy);
         return user;

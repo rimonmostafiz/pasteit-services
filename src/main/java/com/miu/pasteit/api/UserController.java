@@ -18,10 +18,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * @author Samson Hailu
  * @author Rimon Mostafiz
+ * @author Abdi Wako Jilo
  */
 
 @Slf4j
@@ -35,7 +37,7 @@ public class UserController {
 
     @PostMapping({"/user"})
     @ApiOperation(value = "Create User")
-    public ResponseEntity<RestResponse<UserModel>> createUser(@RequestBody UserCreateRequest userCreateRequest) {
+    public ResponseEntity<RestResponse<UserModel>> createUser(@RequestBody @Valid UserCreateRequest userCreateRequest) {
         User user = userService.createUser(userCreateRequest, userCreateRequest.getUsername());
         UserModel userModel = UserMapper.mapToUserModel(user);
         return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, userModel);

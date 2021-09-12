@@ -29,6 +29,7 @@ import static com.miu.pasteit.security.SecurityUtils.getUserNamePasswordAuthenti
 /**
  * @author Samson Hailu
  * @author Rimon Mostafiz
+ * @author Abdi Wako Jilo
  */
 @Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
