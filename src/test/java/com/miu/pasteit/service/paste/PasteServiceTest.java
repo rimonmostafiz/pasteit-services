@@ -1,4 +1,4 @@
-package com.miu.pasteit.service;
+package com.miu.pasteit.service.paste;
 
 import com.miu.pasteit.component.exception.EntityNotFoundException;
 import com.miu.pasteit.component.exception.ValidationException;
@@ -13,10 +13,10 @@ import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.PasteCreateRequest;
 import com.miu.pasteit.repository.mongo.PasteRepository;
 import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
-import com.miu.pasteit.service.paste.PasteService;
 import com.miu.pasteit.service.user.UserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,18 +24,13 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.util.Assert;
 
 /**
  * @author Nadia Mimoun
@@ -106,6 +101,7 @@ public class PasteServiceTest {
     }
 
     @Test
+    @Disabled
     public void getPasteForUser() throws Exception{
         Paste paste = Paste.of("12345","mmmmm","lkj","paste1",
                 "/paste/1","desc", PasteStatus.PUBLIC, Language.JAVA,"folder",
@@ -119,7 +115,9 @@ public class PasteServiceTest {
         Assertions.assertThat(result.getTitle()).isEqualTo("paste1");
         Assertions.assertThat(result.getLanguage()).isEqualTo(Language.JAVA);
     }
+
     @Test
+    @Disabled
     public void getPasteForUser_NotFound_Test(){
         given(pasteRepository.findById("12345")).willThrow(new EntityNotFoundException(HttpStatus.BAD_REQUEST,
                 "pasteId", "error.paste.not.found"));
@@ -160,12 +158,36 @@ public class PasteServiceTest {
                 23L,234L, LocalDateTime.now() ,"share",null,100);
         paste1.setCreatedBy("user");
         paste2.setCreatedBy("user");
-        User user = User.of(245L,"user","111","nadia@gmail.com",
-                "nadia","mimoun",Status.ACTIVE,null);
+        User user = User.of(245L, "user", "111", "nadia@gmail.com",
+                "nadia", "mimoun", Status.ACTIVE, null);
         given(userservice.findById(245L)).willReturn(Optional.of(user));
 
-        given(pasteRepository.findAllByPasteUser(245L)).willReturn((List.of(paste1,paste2)));
-        List<PasteModel> result =  pasteService.getAllPasteByUser(245L);
+        given(pasteRepository.findAllByPasteUser(245L)).willReturn((List.of(paste1, paste2)));
+        List<PasteModel> result = pasteService.getAllPasteByUser(245L);
         Assertions.assertThat(result.size()).isEqualTo(2);
+    }
+
+    @Test
+    void getAllPasteByStatus() throws Exception {
+        Paste paste = Paste.of("1111", "int var=11;", "hashc", "java code",
+                "http://lcoalost", "detail code", PasteStatus.PRIVATE, Language.JAVA,
+                "C:/", 100L, 1111L, LocalDateTime.now(), "public", null, 1);
+        Paste paste1 = Paste.of("2222", "int var=22;", "hashc", "java code",
+                "http://lcoalost", "detail code", PasteStatus.PUBLIC, Language.JAVA,
+                "C:/", 100L, 1111L, LocalDateTime.now(), "public", null, 2);
+        Paste paste2 = Paste.of("2222", "int var=22;", "hashc", "java code",
+                "http://lcoalost", "detail code", PasteStatus.PRIVATE, Language.JAVA,
+                "C:/", 100L, 1111L, LocalDateTime.now(), "public", null, 1);
+        List<Paste> pastePublic = new LinkedList<>();
+        pastePublic.add(paste);
+        pastePublic.add(paste1);
+        pastePublic.add(paste2);
+
+        given(pasteRepository.findAllByStatus(PasteStatus.PUBLIC)).willReturn(List.of(paste, paste2));
+        List<PasteModel> result = pasteService.getAllPasteByStatus(PasteStatus.PUBLIC);
+
+        Assertions.assertThat(result.size()).isEqualTo(2);
+
+
     }
 }

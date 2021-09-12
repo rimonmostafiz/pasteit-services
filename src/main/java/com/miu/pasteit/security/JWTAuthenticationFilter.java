@@ -66,6 +66,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withClaim(SecurityUtils.ROLE, getAuthority((org.springframework.security.core.userdetails.User) auth.getPrincipal()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + SecurityUtils.EXPIRE_DURATION))
                 .sign(Algorithm.HMAC512(SecurityUtils.SECRET_KEY.getBytes()));
+
         AuthResponse authResponse = new AuthResponse(auth.getName(), token);
         RestResponse<AuthResponse> restResponse = ResponseUtils.buildSuccessRestResponse(HttpStatus.OK, authResponse);
         ResponseUtils.createCustomResponse(res, restResponse);

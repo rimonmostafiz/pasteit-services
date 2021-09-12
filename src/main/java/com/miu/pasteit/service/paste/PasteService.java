@@ -74,7 +74,7 @@ public class PasteService {
     }
 
     public PasteModel getPasteForUser(String url, String username) {
-        Predicate<Paste> isOwnPaste = Paste -> Paste.getCreatedBy().equals(username);
+        Predicate<Paste> isOwnPaste = paste -> paste.getCreatedBy().equals(username);
         Predicate<Paste> isPastePublic = paste -> paste.getStatus() == PasteStatus.PUBLIC;
 
         PasteModel pasteModel = Optional.of(pasteRepository.findByUrl(url))
