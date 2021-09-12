@@ -3,7 +3,6 @@ package com.miu.pasteit.service.user;
 import com.miu.pasteit.component.exception.EntityNotFoundException;
 import com.miu.pasteit.model.entity.activity.sql.ActivityUser;
 import com.miu.pasteit.model.entity.common.ActivityAction;
-import com.miu.pasteit.model.entity.common.Status;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.entity.db.sql.UserRoles;
 import com.miu.pasteit.model.mapper.UserMapper;
@@ -17,7 +16,6 @@ import com.miu.pasteit.utils.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +23,7 @@ import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * @author Rimon Mostafiz
@@ -37,12 +33,8 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
-
-    public static final Predicate<User> isNotInactive = user -> !user.getStatus().equals(Status.INACTIVE);
     public static final Supplier<EntityNotFoundException> userNotFound = () ->
             new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found");
-    public static final Supplier<DisabledException> userIsDisabled = () ->
-            new DisabledException("error.user.is.disabled");
     private final UserRepository userRepository;
     private final ActivityUserRepository activityUserRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
@@ -75,29 +67,12 @@ public class UserService {
                 .orElseThrow(userNotFound);
     }
 
-    public void ifDisableThrowException(User user) {
-        Optional.ofNullable(user)
-                .filter(isNotInactive)
-                .orElseThrow(userIsDisabled);
-    }
-
-    public List<String> getUserRoles(User user) {
-        return user.getRoles()
-                .stream()
-                .map(UserRoles::getRoleName)
-                .collect(Collectors.toList());
-    }
-
     public User updateUser(Long id, UserUpdateRequest userUpdateRequest, String requestUser) {
-        User savedUser = this.findById(id)
-                .map(user -> UserMapper.mapUserUpdateRequest(user, userUpdateRequest, requestUser))
-                .map(userRepository::saveAndFlush)
-                .orElseThrow(userNotFound);
+        User user = this.findById(id).orElseThrow(userNotFound);
+        User updatedUser = userRepository.saveAndFlush(UserMapper.mapUserUpdateRequest(user, userUpdateRequest, requestUser));
 
-        ActivityUser activityUser = ActivityUser.of(savedUser, requestUser, ActivityAction.UPDATE);
-        log.debug("activity User: {}", activityUser);
+        ActivityUser activityUser = ActivityUser.of(updatedUser, requestUser, ActivityAction.UPDATE);
         activityUserRepository.save(activityUser);
-
-        return savedUser;
+        return updatedUser;
     }
 }

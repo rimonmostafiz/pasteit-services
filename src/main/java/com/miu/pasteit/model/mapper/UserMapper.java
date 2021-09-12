@@ -24,13 +24,6 @@ public class UserMapper {
                 .build();
     }
 
-    public static UserModel mapperForInternal(User entity) {
-        UserModel model = new UserModel();
-        model.setId(entity.getId());
-        model.setUsername(entity.getUsername());
-        return model;
-    }
-
     public static User mapUserCreateRequest(UserCreateRequest userCreateRequest, String createdBy,
                                             String hashedPassword) {
         User user = new User();

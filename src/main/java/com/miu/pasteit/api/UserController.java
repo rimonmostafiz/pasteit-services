@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -44,10 +43,9 @@ public class UserController {
     }
 
     @PatchMapping("/user/{id}")
-    @ApiOperation(value = "Edit Paste")
-    public ResponseEntity<RestResponse<UserModel>> updateUser(HttpServletRequest request,
-                                                              @PathVariable Long id,
-                                                              @RequestBody UserUpdateRequest userUpdateRequest) {
+    @ApiOperation(value = "Edit User")
+    public ResponseEntity<RestResponse<UserModel>> editUser(@PathVariable Long id,
+                                                            @RequestBody UserUpdateRequest userUpdateRequest) {
         String requestUser = Utils.getRequestOwner();
         User user = userService.updateUser(id, userUpdateRequest, requestUser);
         UserModel userModel = UserMapper.mapToUserModel(user);
