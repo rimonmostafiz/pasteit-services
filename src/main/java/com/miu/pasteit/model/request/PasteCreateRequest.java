@@ -6,8 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * @author Rimon Mostafiz
+ * @autor Abdi Wako Jilo
  */
 @Data
 @Builder
@@ -16,6 +19,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PasteCreateRequest {
 
+    @NotBlank(message = "{error.paste.content.blank}")
     private String content;
 
     private String title;
