@@ -13,9 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -32,13 +32,13 @@ public class FeedbackController {
 
     private final FeedbackService feedbackService;
 
-    @PostMapping("/feedback/{id}")
+    @PostMapping("/feedback/{pasteId}")
+    @PreAuthorize("hasAnyAuthority('USER')")
     @ApiOperation(value = "Create Feedback", code = 201)
-    public ResponseEntity<RestResponse<FeedbackResponse>> createPaste(HttpServletRequest request,
-                                                                      @PathVariable String id,
+    public ResponseEntity<RestResponse<FeedbackResponse>> createPaste(@PathVariable String pasteId,
                                                                       @RequestBody @Valid FeedbackCreateRequest feedbackCreateRequest) {
         String requestUser = Utils.getRequestOwner();
-        List<FeedbackModel> feedbacks = feedbackService.createFeedback(id, feedbackCreateRequest, requestUser);
+        List<FeedbackModel> feedbacks = feedbackService.createFeedback(pasteId, feedbackCreateRequest, requestUser);
         FeedbackResponse feedbackResponse = FeedbackResponse.of(feedbacks);
         return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, feedbackResponse);
     }

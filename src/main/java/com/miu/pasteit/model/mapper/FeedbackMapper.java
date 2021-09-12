@@ -5,7 +5,6 @@ import com.miu.pasteit.model.entity.db.nosql.Feedback;
 import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.FeedbackCreateRequest;
-import com.miu.pasteit.model.request.FeedbackEditRequest;
 
 import java.time.LocalDateTime;
 
@@ -36,18 +35,5 @@ public class FeedbackMapper {
 
         entity.setCreatedBy(createdBy);
         return entity;
-    }
-
-    public static void updateRequestToEntity(Feedback entity, FeedbackEditRequest feedbackEditRequest, String createdBy, User user) {
-
-        if (feedbackEditRequest.getComment() != null) {
-            entity.setComment(feedbackEditRequest.getComment());
-        }
-        if (user != null) {
-            entity.setUserName(user.getUsername());
-            entity.setUserId(user.getId());
-        }
-        entity.setDateTime(LocalDateTime.now());
-        entity.setCreatedBy(createdBy);
     }
 }
