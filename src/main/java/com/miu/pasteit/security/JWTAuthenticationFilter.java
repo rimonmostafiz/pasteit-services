@@ -3,10 +3,14 @@ package com.miu.pasteit.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.miu.pasteit.model.common.RestResponse;
 import com.miu.pasteit.model.entity.db.sql.User;
+import com.miu.pasteit.model.response.AuthResponse;
 import com.miu.pasteit.service.user.SessionService;
+import com.miu.pasteit.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -25,6 +29,7 @@ import static com.miu.pasteit.security.SecurityUtils.getUserNamePasswordAuthenti
 /**
  * @author Samson Hailu
  * @author Rimon Mostafiz
+ * @author Abdi Wako Jilo
  */
 @Slf4j
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -61,6 +66,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withClaim(SecurityUtils.ROLE, getAuthority((org.springframework.security.core.userdetails.User) auth.getPrincipal()))
                 .withExpiresAt(new Date(System.currentTimeMillis() + SecurityUtils.EXPIRE_DURATION))
                 .sign(Algorithm.HMAC512(SecurityUtils.SECRET_KEY.getBytes()));
+        AuthResponse authResponse = new AuthResponse(auth.getName(), token);
+        RestResponse<AuthResponse> restResponse = ResponseUtils.buildSuccessRestResponse(HttpStatus.OK, authResponse);
+        ResponseUtils.createCustomResponse(res, restResponse);
         res.addHeader(SecurityUtils.AUTHORIZATION_HEADER, SecurityUtils.TOKEN_PREFIX + token);
         sessionService.addLoggedUser(auth.getName());
     }
