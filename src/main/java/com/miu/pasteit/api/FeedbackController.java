@@ -38,14 +38,9 @@ public class FeedbackController {
                                                                       @PathVariable String id,
                                                                       @RequestBody @Valid FeedbackCreateRequest feedbackCreateRequest) {
         String requestUser = Utils.getRequestOwner();
-<<<<<<< Updated upstream
         List<FeedbackModel> feedbacks = feedbackService.createFeedback(id, feedbackCreateRequest, requestUser);
         FeedbackResponse feedbackResponse = FeedbackResponse.of(feedbacks);
         return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, feedbackResponse);
-=======
-        List<Feedback> feedback = feedbackService.createFeedback(id, feedbackCreateRequest, requestUser);
-        return ResponseUtils.buildSuccessResponse(HttpStatus.CREATED, feedback);
->>>>>>> Stashed changes
     }
 
 }
