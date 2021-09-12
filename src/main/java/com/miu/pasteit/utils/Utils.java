@@ -2,9 +2,7 @@ package com.miu.pasteit.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -17,15 +15,6 @@ import java.security.NoSuchAlgorithmException;
 public class Utils {
 
     public static final String HASH_ALGORITHM = "MD5";
-
-
-    public static UserDetails extractUserDetails(HttpServletRequest request) {
-        return (UserDetails) request.getSession().getAttribute(SessionKey.USER_DETAILS);
-    }
-
-    public static String getUserNameFromRequest(HttpServletRequest request) {
-        return extractUserDetails(request).getUsername();
-    }
 
     public static String getRequestOwner() {
         return SecurityContextHolder.getContext().getAuthentication().getName();

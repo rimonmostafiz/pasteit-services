@@ -1,6 +1,7 @@
 package com.miu.pasteit.service.user;
 
 import com.miu.pasteit.component.exception.EntityNotFoundException;
+import com.miu.pasteit.component.exception.ValidationException;
 import com.miu.pasteit.model.entity.activity.sql.ActivityUser;
 import com.miu.pasteit.model.entity.common.ActivityAction;
 import com.miu.pasteit.model.entity.db.sql.User;
@@ -41,6 +42,16 @@ public class UserService {
     private final UserRoleService userRoleService;
 
     public User createUser(UserCreateRequest userCreateRequest, String requestUser) {
+        userRepository.findByEmail(userCreateRequest.getEmail())
+                .ifPresent(user -> {
+                    throw new ValidationException(HttpStatus.BAD_REQUEST, "email", "Email already exists");
+                });
+
+        userRepository.findByUsername(userCreateRequest.getUsername())
+                .ifPresent(user -> {
+                    throw new ValidationException(HttpStatus.BAD_REQUEST, "username", "Username already exists");
+                });
+
         String encodedPassword = bCryptPasswordEncoder.encode(userCreateRequest.getPassword());
         User user = UserMapper.mapUserCreateRequest(userCreateRequest, requestUser, encodedPassword);
         User savedUser = userRepository.saveAndFlush(user);
@@ -68,6 +79,11 @@ public class UserService {
     }
 
     public User updateUser(Long id, UserUpdateRequest userUpdateRequest, String requestUser) {
+        userRepository.findByEmail(userUpdateRequest.getEmail())
+                .ifPresent(user -> {
+                    throw new ValidationException(HttpStatus.BAD_REQUEST, "email", "Email already exists");
+                });
+
         User user = this.findById(id).orElseThrow(userNotFound);
         User updatedUser = userRepository.saveAndFlush(UserMapper.mapUserUpdateRequest(user, userUpdateRequest, requestUser));
 

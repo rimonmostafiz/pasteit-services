@@ -23,12 +23,4 @@ final public class UrlHelper {
     public static String all(String url) {
         return url + "/**";
     }
-
-    public static String process(String url) {
-        return url + "/process";
-    }
-
-    public static String prepare(String host, int port, String contextPath, String context) {
-        return "http://" + host + ":" + port + "/" + contextPath + "/" + context;
-    }
 }
