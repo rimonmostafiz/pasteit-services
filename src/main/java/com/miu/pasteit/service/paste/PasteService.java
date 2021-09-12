@@ -27,7 +27,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -100,59 +99,46 @@ public class PasteService {
     }
 
     public List<PasteModel> getAllPasteByUser(Long userId) {
-        return userservice.findById(userId)
-                .map(user -> pasteRepository.findAllByPasteUser(user.getId()))
-                .orElseThrow(UserService.userNotFound)
-                .stream()
-                .map(PasteMapper::mapper)
-                .collect(Collectors.toList());
-    }
+        User user = userservice.findById(userId)
+                .orElseThrow(UserService.userNotFound);
 
-//    public List<Paste> findAllByLanguage(String Language) {
-//        return null;
-//    }
-
-    public List<PasteModel> getAllExpiredPaste() {
-        return null;
-    }
-
-    public List<PasteModel> getAllPasteByStatus(PasteStatus status) {
-        return pasteRepository.findAllByStatus(status)
+        return pasteRepository.findAllByPasteUser(user.getId())
                 .stream()
                 .map(PasteMapper::mapper)
                 .collect(Collectors.toList());
     }
 
     public void deletePaste(String id, String requestUser) {
-        Function<Paste, ActivityPaste> mapToActivity = paste ->
-                ActivityPaste.of(paste, requestUser, ActivityAction.DELETE);
-
-        ActivityPaste activityPaste = pasteRepository.findById(id)
-                .map(mapToActivity)
+        Paste paste = pasteRepository.findById(id)
                 .orElseThrow(pasteNotFound);
+
+        if (!paste.getPasteUserName().equals(requestUser)) {
+            throw new ValidationException(HttpStatus.UNAUTHORIZED, "pasteId", "error.not.own.paste");
+        }
+        ActivityPaste activityPaste = ActivityPaste.of(paste, requestUser, ActivityAction.DELETE);
 
         pasteRepository.deleteById(id);
         activityPasteRepository.save(activityPaste);
+        feedbackService.deleteAllFeedbackForPaste(paste.getId());
     }
 
     public PasteModel updatePaste(String id, PasteUpdateRequest pasteUpdateRequest, String requestUser) {
         Paste paste = pasteRepository.findById(id)
                 .orElseThrow(pasteNotFound);
 
-        if (paste.getStatus() == PasteStatus.DELETED) {
-            throw new ValidationException(HttpStatus.BAD_REQUEST, "status", "error.paste.status.deleted.not.editable");
+        if (!paste.getPasteUserName().equals(requestUser)) {
+            throw new ValidationException(HttpStatus.UNAUTHORIZED, "pasteId", "error.not.own.paste");
         }
 
         userservice.findById(paste.getPasteUser())
-                .ifPresent(pasteUser
-                        -> PasteMapper
-                        .updateRequestToEntity(paste, pasteUpdateRequest, requestUser, pasteUser));
+                .ifPresent(pasteUser ->
+                        PasteMapper.updateRequestToEntity(paste, pasteUpdateRequest, requestUser, pasteUser));
 
-        Paste savedPaste = pasteRepository.save(paste);
+        Paste updatedPaste = pasteRepository.save(paste);
 
-        ActivityPaste activityPaste = ActivityPaste.of(savedPaste, requestUser, ActivityAction.UPDATE);
+        ActivityPaste activityPaste = ActivityPaste.of(updatedPaste, requestUser, ActivityAction.UPDATE);
         activityPasteRepository.save(activityPaste);
 
-        return PasteMapper.mapper(savedPaste);
+        return PasteMapper.mapper(updatedPaste);
     }
 }

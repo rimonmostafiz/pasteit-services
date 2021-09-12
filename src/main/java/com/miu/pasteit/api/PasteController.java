@@ -2,7 +2,6 @@ package com.miu.pasteit.api;
 
 import com.miu.pasteit.model.common.RestResponse;
 import com.miu.pasteit.model.dto.PasteModel;
-import com.miu.pasteit.model.entity.common.PasteStatus;
 import com.miu.pasteit.model.request.PasteCreateRequest;
 import com.miu.pasteit.model.request.PasteUpdateRequest;
 import com.miu.pasteit.model.response.PasteResponse;
@@ -18,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -35,9 +33,9 @@ public class PasteController {
     private final PasteService pasteService;
 
     @PostMapping("/paste")
+    @PreAuthorize("hasAnyAuthority('USER')")
     @ApiOperation(value = "Create Paste", code = 201)
-    public ResponseEntity<RestResponse<PasteResponse>> createPaste(HttpServletRequest request,
-                                                                   @RequestBody @Valid PasteCreateRequest PasteCreateRequest) {
+    public ResponseEntity<RestResponse<PasteResponse>> createPaste(@RequestBody @Valid PasteCreateRequest PasteCreateRequest) {
         String requestUser = Utils.getRequestOwner();
         PasteModel Paste = pasteService.createPaste(PasteCreateRequest, requestUser);
         PasteResponse pasteResponse = PasteResponse.of(Paste);
@@ -45,9 +43,9 @@ public class PasteController {
     }
 
     @PatchMapping("/paste/{id}")
+    @PreAuthorize("hasAnyAuthority('USER')")
     @ApiOperation(value = "Edit Paste")
-    public ResponseEntity<RestResponse<PasteResponse>> editPaste(HttpServletRequest request,
-                                                                 @PathVariable String id,
+    public ResponseEntity<RestResponse<PasteResponse>> editPaste(@PathVariable String id,
                                                                  @RequestBody PasteUpdateRequest pasteUpdateRequest) {
         String requestUser = Utils.getRequestOwner();
         PasteModel paste = pasteService.updatePaste(id, pasteUpdateRequest, requestUser);
@@ -57,35 +55,24 @@ public class PasteController {
 
     @GetMapping("/paste/{url}")
     @ApiOperation(
-            value = "Get Paste By ID",
-            notes = "Need to pass valid Paste id to get details of the Paste"
+            value = "Get Paste By URL",
+            notes = "Need to pass valid paste url to get details of the Paste"
     )
-    public ResponseEntity<RestResponse<PasteResponse>> getPaste(HttpServletRequest request, @PathVariable String url) {
+    public ResponseEntity<RestResponse<PasteResponse>> getPaste(@PathVariable String url) {
         final String username = Utils.getRequestOwner();
-        //final boolean isAdmin = RoleUtils.hasPrivilege(request, RoleUtils.ADMIN_ROLE);
         PasteModel paste = pasteService.getPasteForUser(url, username);
         PasteResponse pasteResponse = PasteResponse.of(paste);
         return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);
     }
 
-    @GetMapping("/paste/search-by-status-expired")
-    @ApiOperation(value = "Search Paste - Get expired Pastes(due date in the past)")
-    public ResponseEntity<RestResponse<PasteResponse>> getExpiredPastes() {
-        List<PasteModel> expiredPastes = pasteService.getAllExpiredPaste();
-        PasteResponse pasteResponse = PasteResponse.of(expiredPastes);
-        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);
-    }
-
-    @GetMapping("/paste/search-by-status/{status}")
+    @DeleteMapping("/paste/{id}")
     @ApiOperation(
-            value = "Search Paste - By status",
-            notes = "Status should be public/private/delete"
-    )
-    public ResponseEntity<RestResponse<PasteResponse>> searchByStatus(@PathVariable String status) {
-        PasteStatus pasteStatus = PasteStatus.getStatus(status);
-        List<PasteModel> pastes = pasteService.getAllPasteByStatus(pasteStatus);
-        PasteResponse pasteResponse = PasteResponse.of(pastes);
-        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, pasteResponse);
+            value = "Delete Paste",
+            notes = "Need to pass valid paste id")
+    public ResponseEntity<RestResponse<String>> deletePaste(@PathVariable String id) {
+        final String username = Utils.getRequestOwner();
+        pasteService.deletePaste(id, username);
+        return ResponseUtils.buildSuccessResponse(HttpStatus.OK, "Paste deleted successfully");
     }
 
     @GetMapping("/paste/search-by-user/{userId}")

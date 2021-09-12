@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PasteModel {
     private String id;
@@ -39,6 +39,8 @@ public class PasteModel {
     private LocalDateTime expiryDateTime;
 
     private Long pasteUser;
+
+    private String pasteUserName;
 
     private LocalDateTime pasteDateTime;
 

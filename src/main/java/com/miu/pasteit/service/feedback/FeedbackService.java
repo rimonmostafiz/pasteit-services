@@ -55,4 +55,9 @@ public class FeedbackService {
         return feedbackRepository.findAllByPasteId(pasteId);
     }
 
+    public void deleteAllFeedbackForPaste(String pasteId) {
+        List<Feedback> allFeedback = feedbackRepository.findAllByPasteId(pasteId);
+        feedbackRepository.deleteAll(allFeedback);
+    }
+
 }

@@ -3,7 +3,6 @@ package com.miu.pasteit.model.mapper;
 import com.miu.pasteit.model.dto.PasteModel;
 import com.miu.pasteit.model.entity.common.Language;
 import com.miu.pasteit.model.entity.common.PasteStatus;
-import com.miu.pasteit.model.entity.db.nosql.Feedback;
 import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.PasteCreateRequest;
@@ -28,6 +27,7 @@ public class PasteMapper {
         model.setLanguage(entity.getLanguage());
         model.setFolder(entity.getFolder());
         model.setPasteUser(entity.getPasteUser());
+        model.setPasteUserName(entity.getPasteUserName());
         model.setPasteDateTime(entity.getPasteDateTime());
         return model;
     }
@@ -47,6 +47,7 @@ public class PasteMapper {
                 ? Language.NONE
                 : Language.getLanguage(pasteCreateRequest.getLanguage()));
         entity.setPasteUser(user.getId());
+        entity.setPasteUserName(user.getUsername());
         entity.setFolder(pasteCreateRequest.getFolder());
         entity.setPasteDateTime(LocalDateTime.now());
 
@@ -56,24 +57,25 @@ public class PasteMapper {
 
     public static void updateRequestToEntity(Paste entity, PasteUpdateRequest pasteUpdateRequest, String createdBy, User user) {
 
+        entity.setContent(pasteUpdateRequest.getContent());
+        entity.setContentHash(Utils.getContentHash(entity.getContent()));
         if (pasteUpdateRequest.getDescription() != null) {
             entity.setDescription(pasteUpdateRequest.getDescription());
         }
         if (pasteUpdateRequest.getStatus() != null) {
             entity.setStatus(PasteStatus.getStatus(pasteUpdateRequest.getStatus()));
         }
+        if (pasteUpdateRequest.getLanguage() != null) {
+            Language language = Language.getLanguage(pasteUpdateRequest.getLanguage());
+            entity.setLanguage(language);
+        }
         if (user != null) {
             entity.setPasteUser(user.getId());
+            entity.setPasteUserName(user.getUsername());
+        }
+        if (pasteUpdateRequest.getFolder() != null) {
+            entity.setFolder(pasteUpdateRequest.getFolder());
         }
         entity.setCreatedBy(createdBy);
     }
-
-    public static void addFeedbackToEntity(Paste entity, Feedback feedback, String createdBy, Long user) {
-
-        if (feedback.getComment() != null) {
-            entity.addFeedBack(feedback);
-        }
-        entity.setCreatedBy(createdBy);
-    }
-
 }

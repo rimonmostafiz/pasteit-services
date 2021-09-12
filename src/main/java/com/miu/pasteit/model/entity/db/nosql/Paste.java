@@ -50,6 +50,8 @@ public class Paste extends NoSqlEntityCommon {
 
     private Long pasteUser;
 
+    private String pasteUserName;
+
     private LocalDateTime pasteDateTime;
 
     private String share;
