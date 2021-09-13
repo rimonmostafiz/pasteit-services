@@ -16,6 +16,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "USER_ROLES")
 @AllArgsConstructor(staticName = "of")
+
 @EqualsAndHashCode(callSuper = true)
 public class UserRoles extends EntityCommon {
     @Id
