@@ -13,6 +13,7 @@ import com.miu.pasteit.model.entity.db.nosql.Feedback;
 import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.request.PasteCreateRequest;
+import com.miu.pasteit.model.request.PasteUpdateRequest;
 import com.miu.pasteit.repository.mongo.PasteRepository;
 import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
 import com.miu.pasteit.service.feedback.FeedbackService;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -180,4 +182,38 @@ public class PasteServiceTest {
         List<PasteModel> result = pasteService.getAllPasteByUser(245L);
         Assertions.assertThat(result.size()).isEqualTo(2);
     }
-}
+
+    @Test
+    void updatePaste() {
+        Paste paste = Paste.of("1111", "int x=5;", "hashedcont", "C++ Code",
+                "localhost/paste/1", "desc", PasteStatus.PUBLIC, Language.CPP, "folder",
+                23L, 234L, "eyob", LocalDateTime.now(), "share", null, 100);
+        PasteUpdateRequest updateRequest=PasteUpdateRequest.of("String var=5;",
+                "string variable","public","JAVA","C:/" );
+        User user = User.of(245L, "user", "111", "nadia@gmail.com",
+                "nadia", "mimoun", Status.ACTIVE, null);
+        given(pasteRepository.findById(any())).willReturn(Optional.of(paste));
+        given(userservice.findById(any())).willReturn(Optional.of(user));
+        given(pasteRepository.save(any())).willReturn(paste);
+        ActivityPaste activityPaste = ActivityPaste.of(paste, "eyob", ActivityAction.UPDATE);
+        activitypasterepository.save(activityPaste);
+        PasteModel result=pasteService.updatePaste("1111",updateRequest,"eyob");
+        Assertions.assertThat(result.getContent()).isEqualTo("String var=5;");
+        Assertions.assertThat(result.getDescription()).isEqualTo("string variable");
+        Assertions.assertThat(result.getLanguage()).isEqualTo(Language.JAVA);
+    }
+
+
+
+    @Test
+    public void deletePaste() throws Exception {
+        Paste paste = Paste.of("1234", "content", "lkj", "paste1",
+                "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
+                23L, 234L, "nadia", LocalDateTime.now(), "share", null, 100);
+        given(pasteRepository.findById(any())).willReturn(Optional.of(paste));
+        ActivityPaste activityPaste = ActivityPaste.of(paste, "nadia", ActivityAction.DELETE);
+        given(activitypasterepository.save(activityPaste)).willReturn(activityPaste);
+        given(activitypasterepository.save(activityPaste)).willReturn(activityPaste);
+        pasteService.deletePaste("1234", "nadia");
+    }
+    }
