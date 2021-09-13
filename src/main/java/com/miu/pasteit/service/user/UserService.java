@@ -42,14 +42,14 @@ public class UserService {
     private final UserRoleService userRoleService;
 
     public User createUser(UserCreateRequest userCreateRequest, String requestUser) {
-        userRepository.findByEmail(userCreateRequest.getEmail())
-                .ifPresent(user -> {
-                    throw new ValidationException(HttpStatus.BAD_REQUEST, "email", "Email already exists");
-                });
-
         userRepository.findByUsername(userCreateRequest.getUsername())
                 .ifPresent(user -> {
                     throw new ValidationException(HttpStatus.BAD_REQUEST, "username", "Username already exists");
+                });
+
+        userRepository.findByEmail(userCreateRequest.getEmail())
+                .ifPresent(user -> {
+                    throw new ValidationException(HttpStatus.BAD_REQUEST, "email", "Email already exists");
                 });
 
         String encodedPassword = bCryptPasswordEncoder.encode(userCreateRequest.getPassword());
