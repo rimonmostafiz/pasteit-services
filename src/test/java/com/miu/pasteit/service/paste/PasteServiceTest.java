@@ -2,17 +2,22 @@ package com.miu.pasteit.service.paste;
 
 import com.miu.pasteit.component.exception.EntityNotFoundException;
 import com.miu.pasteit.component.exception.ValidationException;
+import com.miu.pasteit.model.dto.FeedbackModel;
 import com.miu.pasteit.model.dto.PasteModel;
 import com.miu.pasteit.model.entity.activity.nosql.ActivityPaste;
 import com.miu.pasteit.model.entity.common.ActivityAction;
 import com.miu.pasteit.model.entity.common.Language;
 import com.miu.pasteit.model.entity.common.PasteStatus;
 import com.miu.pasteit.model.entity.common.Status;
+import com.miu.pasteit.model.entity.db.nosql.Feedback;
 import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
+import com.miu.pasteit.model.mapper.FeedbackMapper;
+import com.miu.pasteit.model.request.FeedbackCreateRequest;
 import com.miu.pasteit.model.request.PasteCreateRequest;
 import com.miu.pasteit.repository.mongo.PasteRepository;
 import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
+import com.miu.pasteit.service.feedback.FeedbackService;
 import com.miu.pasteit.service.user.UserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +43,8 @@ public class PasteServiceTest {
 
     @Mock
     PasteRepository pasteRepository;
+   @Mock
+   PasteModel pasteModel;
 
     @Mock
     UserService userservice;
@@ -45,8 +52,13 @@ public class PasteServiceTest {
     @Mock
     ActivityPasteRepository activitypasterepository;
 
+    @Mock
+    FeedbackService feedbackService;
+
     @InjectMocks
     PasteService pasteService;
+    @Mock
+    FeedbackModel feedbackModel;
 
     @BeforeEach
     public void setUp() {
@@ -56,7 +68,7 @@ public class PasteServiceTest {
 
     @Test
     public void getPaste() throws Exception {
-        Paste paste = Paste.of("1234", "mmmmm", "lkj", "paste1",
+        Paste paste = Paste.of("1234", "content", "lkj", "paste1",
                 "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
                 23L, 234L, "username", LocalDateTime.now(), "share", null, 100);
         given(pasteRepository.findById("1234")).willReturn(Optional.of(paste));
@@ -102,44 +114,45 @@ public class PasteServiceTest {
     }
 
     @Test
-    @Disabled
+
     public void getPasteForUser() throws Exception {
-        Paste paste = Paste.of("12345", "mmmmm", "lkj", "paste1",
-                "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
-                23L, 234L, "username", LocalDateTime.now(), "share", null, 100);
+        Paste paste = Paste.of("12345", "content", "lkj", "paste1",
+               "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
+               23L, 234L, "username", LocalDateTime.now(), "share", null, 100);
         paste.setCreatedBy("nadia");
-        given(pasteRepository.findById("12345")).willReturn(Optional.of(paste));
-
-        PasteModel result = pasteService.getPasteForUser("12345", "nadia");
-
-        Assertions.assertThat(result.getId()).isEqualTo("12345");
+        given(pasteRepository.findByUrl("/paste/1")).willReturn(Optional.of(paste));
+        Feedback feedback=new Feedback();
+        List<Feedback> feedbacks=List.of(feedback);
+        paste.setFeedback(feedbacks);
+        given(feedbackService.getAllFeedbackForPaste(pasteModel.getId())).willReturn(List.of(feedback));
+        PasteModel result = pasteService.getPasteForUser("/paste/1", "nadia");
+        Assertions.assertThat(result.getUrl()).isEqualTo("/paste/1");
         Assertions.assertThat(result.getTitle()).isEqualTo("paste1");
         Assertions.assertThat(result.getLanguage()).isEqualTo(Language.JAVA);
     }
 
     @Test
-    @Disabled
     public void getPasteForUser_NotFound_Test() {
-        given(pasteRepository.findById("12345")).willThrow(new EntityNotFoundException(HttpStatus.BAD_REQUEST,
+        given(pasteRepository.findByUrl("/paste/1")).willThrow(new EntityNotFoundException(HttpStatus.BAD_REQUEST,
                 "pasteId", "error.paste.not.found"));
-        assertThrows(EntityNotFoundException.class, () -> pasteService.getPasteForUser("12345", "nadia"));
+        assertThrows(EntityNotFoundException.class, () -> pasteService.getPasteForUser("/paste/1", "nadia"));
 
     }
 
     @Test
     public void getPasteForUser_notOwnPaste_Test() {
-        given(pasteRepository.findById("12345")).willThrow(new ValidationException(HttpStatus.UNAUTHORIZED,
+        given(pasteRepository.findByUrl("/paste/1")).willThrow(new ValidationException(HttpStatus.UNAUTHORIZED,
                 "pasteId", "error.paste.user.not.authorized"));
-        assertThrows(ValidationException.class, () -> pasteService.getPasteForUser("12345", "nadia"));
+        assertThrows(ValidationException.class, () -> pasteService.getPasteForUser("/paste/1", "nadia"));
 
     }
 
     @Test
     public void getAllPastes() throws Exception {
-        Paste paste1 = Paste.of("12345", "mmmmm", "lkj", "paste1",
+        Paste paste1 = Paste.of("12345", "content", "lkj", "paste1",
                 "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
                 245L, 245L, "username", LocalDateTime.now(), "share", null, 100);
-        Paste paste2 = Paste.of("123456", "mmmmm", "lkj", "paste1",
+        Paste paste2 = Paste.of("123456", "content", "lkj", "paste1",
                 "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
                 245L, 245L, "username", LocalDateTime.now(), "share", null, 100);
 
@@ -154,10 +167,10 @@ public class PasteServiceTest {
     @Test
     public void getAllPasteByUser() throws Exception {
 
-        Paste paste1 = Paste.of("12345", "mmmmm", "lkj", "paste1",
+        Paste paste1 = Paste.of("12345", "content", "lkj", "paste1",
                 "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
                 23L, 234L, "username", LocalDateTime.now(), "share", null, 100);
-        Paste paste2 = Paste.of("123456", "mmmmm", "lkj", "paste1",
+        Paste paste2 = Paste.of("123456", "content", "lkj", "paste1",
                 "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
                 23L, 234L, "username", LocalDateTime.now(), "share", null, 100);
         paste1.setCreatedBy("user");
