@@ -1,5 +1,6 @@
 package com.miu.pasteit.model.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -14,6 +15,7 @@ import static com.miu.pasteit.utils.ValidationConstants.*;
  * @author Abdi Wako Jilo
  */
 @Data
+@AllArgsConstructor
 public class UserUpdateRequest {
 
     @NotBlank(message = "{error.user.email.blank}")

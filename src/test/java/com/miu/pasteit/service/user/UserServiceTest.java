@@ -9,6 +9,7 @@ import com.miu.pasteit.model.entity.db.sql.UserRoles;
 import com.miu.pasteit.model.mapper.UserMapper;
 import com.miu.pasteit.model.mapper.UserRoleMapper;
 import com.miu.pasteit.model.request.UserCreateRequest;
+import com.miu.pasteit.model.request.UserUpdateRequest;
 import com.miu.pasteit.repository.mysql.UserRepository;
 import com.miu.pasteit.repository.mysql.activity.ActivityUserRepository;
 import com.miu.pasteit.service.role.UserRoleService;
@@ -54,23 +55,20 @@ public class UserServiceTest {
     }
 
     @Test
-    @Disabled
     public void createUser() throws Exception {
         UserCreateRequest userCreateRequest = UserCreateRequest.of("nadiamimoun", "1hj",
                 "nadia@gmail.com", "nadia", "mimoun");
         given(passwordEncoder.encode(any())).willReturn(userCreateRequest.getPassword());
         User user = UserMapper.mapUserCreateRequest(userCreateRequest, "user", passwordEncoder.encode(userCreateRequest.getPassword()));
 
-        given(userRepository.save(any())).willReturn(user);
-        ActivityUser activityUser = ActivityUser.of(user, "user", ActivityAction.INSERT);
-        given(activityUserRepository.save(any())).willReturn(activityUser);
+        given(userRepository.saveAndFlush(any())).willReturn(user);
         List<UserRoles> listOfRoles = Collections
                 .singletonList(UserRoleMapper
-                        .createEntity(12345L, RoleEnum.USER.getRoleId(), RoleEnum.USER.name()
+                        .createEntity(user.getId(), RoleEnum.USER.getRoleId(), RoleEnum.USER.name()
                         )
                 );
         given(userRoleService.saveAllRolesForUser(any())).willReturn(listOfRoles);
-        userRoleService.saveAllRolesForUser(listOfRoles);
+
         User result = userservice.createUser(userCreateRequest, "user");
 
         Assertions.assertThat(result.getEmail()).isEqualTo("nadia@gmail.com");
@@ -87,6 +85,7 @@ public class UserServiceTest {
         Assertions.assertThat(result.get().getEmail()).isEqualTo("nadia@gmail.com");
     }
 
+
     @Test
     public void getUserByUsername() throws Exception {
         User user = User.of(245L, "user", "111", "nadia@gmail.com",
@@ -96,11 +95,32 @@ public class UserServiceTest {
         Assertions.assertThat(result.getId()).isEqualTo(245L);
         Assertions.assertThat(result.getEmail()).isEqualTo("nadia@gmail.com");
     }
+    @Test
+    public void usernotfound() throws Exception{
+        given(userRepository.findByUsername("user")).willThrow( new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found"));
+        assertThrows(EntityNotFoundException.class, () -> userservice.getUserByUsername("user"));
+
+    }
 
     @Test
     public void getUserByUsername_NotFound_Test() {
         given(userRepository.findByUsername("user")).willThrow(new EntityNotFoundException(HttpStatus.BAD_REQUEST, "245L", "error.user.not.found"));
         assertThrows(EntityNotFoundException.class, () -> userservice.getUserByUsername("user"));
+
+    }
+    @Test
+    public void UpdateUser()throws Exception{
+        User user = User.of(245L, "user", "111", "nadia@gmail.com",
+                "nadia", "mimoun", Status.ACTIVE, null);
+        given(userservice.findById(any())).willReturn(Optional.of(user));
+        UserUpdateRequest userUpdateRequest=new UserUpdateRequest("nadia@gmail.com","nadia","mimoun");
+        given(userRepository.saveAndFlush(UserMapper.mapUserUpdateRequest(user, userUpdateRequest,"user"))).willReturn(user);
+        User result= userservice.updateUser(245L,userUpdateRequest,"user");
+
+        Assertions.assertThat(result.getId()).isEqualTo(245L);
+        Assertions.assertThat(result.getEmail()).isEqualTo("nadia@gmail.com");
+
+
     }
 
 
