@@ -1,6 +1,3 @@
-import org.flywaydb.gradle.task.FlywayMigrateTask
-import org.apache.tools.ant.filters.ReplaceTokens
-
 plugins {
 	id 'org.springframework.boot' version '2.5.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
@@ -20,21 +17,6 @@ configurations {
 
 repositories {
 	mavenCentral()
-}
-
-def activeProfile = project.findProperty("profile") ?: "dev";
-println "Profile: " + activeProfile
-
-bootRun {
-	args = ["--spring.profiles.active=" + activeProfile]
-}
-
-processResources {
-	with copySpec {
-		from "src/main/resources/application.properties"
-		filter(ReplaceTokens, tokens: ["activatedProperties": activeProfile])
-		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-	}
 }
 
 clean {
@@ -81,18 +63,4 @@ flyway {
 	url=project.ext['test.flyway.url']
 	user=project.ext['test.flyway.user']
 	password=project.ext['test.flyway.password']
-}
-
-task flywayMigrateDevDatabase(type: FlywayMigrateTask) {
-	driver='com.mysql.cj.jdbc.Driver'
-	url = project.ext['dev.flyway.url']
-	user = project.ext['dev.flyway.user']
-	password = project.ext['dev.flyway.password']
-}
-
-task flywayMigrateProdDatabase(type: FlywayMigrateTask) {
-	driver='com.mysql.cj.jdbc.Driver'
-	url = project.ext['prod.flyway.url']
-	user = project.ext['prod.flyway.user']
-	password = project.ext['prod.flyway.password']
 }
