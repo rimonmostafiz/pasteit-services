@@ -35,6 +35,7 @@ import static org.mockito.BDDMockito.given;
 
 /**
  * @author Nadia Mimoun
+ * @author Eyob Gebretinsae
  */
 public class PasteServiceTest {
 
@@ -179,5 +180,23 @@ public class PasteServiceTest {
         given(pasteRepository.findAllByPasteUser(245L)).willReturn((List.of(paste1, paste2)));
         List<PasteModel> result = pasteService.getAllPasteByUser(245L);
         Assertions.assertThat(result.size()).isEqualTo(2);
+    }
+    @Test
+    public void deletepaste() throws Exception {
+        Paste paste = Paste.of("1234", "content", "lkj", "paste1",
+                "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
+                23L, 234L, "nadia", LocalDateTime.now(), "share", null, 100);
+        given(pasteRepository.findById(any())).willReturn(Optional.of(paste));
+        ActivityPaste activityPaste = ActivityPaste.of(paste, "nadia", ActivityAction.DELETE);
+        given(activitypasterepository.save(activityPaste)).willReturn(activityPaste);
+
+        given( activitypasterepository.save(activityPaste)).willReturn(activityPaste);
+        pasteService.deletePaste("1234","nadia");
+
+
+
+
+
+
     }
 }
