@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final UserRolesRepository userRolesRepository;
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = this.userRepository

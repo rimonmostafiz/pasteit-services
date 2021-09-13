@@ -23,12 +23,14 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+
 /**
  * @author Nadia Mimoun
  */
@@ -97,5 +99,11 @@ class FeedbackServiceTest {
     @Test
     public void shouldCreateFeedback() {
 
+    }
+
+    @Test
+    void deleteAllFeedbackForPaste() {
+        given(feedbackRepository.findAllByPasteId("123")).willReturn(Collections.emptyList());
+        feedbackService.deleteAllFeedbackForPaste("123");
     }
 }

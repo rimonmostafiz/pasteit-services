@@ -34,8 +34,7 @@ import java.util.function.Supplier;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
-    public static final Supplier<EntityNotFoundException> userNotFound = () ->
-            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found");
+    public static final Supplier<EntityNotFoundException> userNotFound = () -> new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found");
     private final UserRepository userRepository;
     private final ActivityUserRepository activityUserRepository;
     private final PasswordEncoder bCryptPasswordEncoder;

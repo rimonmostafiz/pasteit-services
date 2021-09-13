@@ -4,10 +4,10 @@ package com.miu.pasteit.utils;
  * @author Rimon Mostafiz
  */
 final public class UrlHelper {
-    public static final String AUTH_LOGIN = "/auth/login";
-    public static final String AUTH_REFRESH = "/auth/refresh";
-    public static final String AUTH_LOGOUT = "/auth/logout";
-    public static final String ALL = "/**";
+//    public static final String AUTH_LOGIN = "/auth/login";
+//    public static final String AUTH_REFRESH = "/auth/refresh";
+//    public static final String AUTH_LOGOUT = "/auth/logout";
+//    public static final String ALL = "/**";
     public static final String API_DOCS = "/api-docs";
     public static final String V2_API_DOCS = "/v2/api-docs";
     public static final String CONFIGURATION = "/configuration";

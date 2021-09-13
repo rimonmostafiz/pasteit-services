@@ -38,13 +38,9 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class PasteService {
-    public static final Supplier<EntityNotFoundException> pasteNotFound = () ->
-            new EntityNotFoundException(HttpStatus.BAD_REQUEST, "pasteId", "error.paste.not.found");
-    public static final Supplier<ValidationException> notOwnPaste = () ->
-            new ValidationException(HttpStatus.UNAUTHORIZED, "pasteId", "error.paste.not.public.or.user.not.authorized");
-    public static final Consumer<Paste> urlAlreadyExists = (paste) -> {
-        throw new RuntimeException(String.format("Generated URL [%s] already exists for pasteId [%s]", paste.getUrl(), paste.getId()));
-    };
+    public static final Supplier<EntityNotFoundException> pasteNotFound = () -> new EntityNotFoundException(HttpStatus.BAD_REQUEST, "pasteId", "error.paste.not.found");
+    public static final Supplier<ValidationException> notOwnPaste = () -> new ValidationException(HttpStatus.UNAUTHORIZED, "pasteId", "error.paste.not.public.or.user.not.authorized");
+    public static final Consumer<Paste> urlAlreadyExists = (paste) -> { throw new RuntimeException(String.format("Generated URL [%s] already exists for pasteId [%s]", paste.getUrl(), paste.getId())); };
 
     private final UserService userservice;
     private final PasteRepository pasteRepository;

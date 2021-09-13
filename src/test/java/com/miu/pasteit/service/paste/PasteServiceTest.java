@@ -12,8 +12,6 @@ import com.miu.pasteit.model.entity.common.Status;
 import com.miu.pasteit.model.entity.db.nosql.Feedback;
 import com.miu.pasteit.model.entity.db.nosql.Paste;
 import com.miu.pasteit.model.entity.db.sql.User;
-import com.miu.pasteit.model.mapper.FeedbackMapper;
-import com.miu.pasteit.model.request.FeedbackCreateRequest;
 import com.miu.pasteit.model.request.PasteCreateRequest;
 import com.miu.pasteit.repository.mongo.PasteRepository;
 import com.miu.pasteit.repository.mongo.activity.ActivityPasteRepository;
@@ -21,7 +19,6 @@ import com.miu.pasteit.service.feedback.FeedbackService;
 import com.miu.pasteit.service.user.UserService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -43,8 +40,8 @@ public class PasteServiceTest {
 
     @Mock
     PasteRepository pasteRepository;
-   @Mock
-   PasteModel pasteModel;
+    @Mock
+    PasteModel pasteModel;
 
     @Mock
     UserService userservice;
@@ -117,12 +114,12 @@ public class PasteServiceTest {
 
     public void getPasteForUser() throws Exception {
         Paste paste = Paste.of("12345", "content", "lkj", "paste1",
-               "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
-               23L, 234L, "username", LocalDateTime.now(), "share", null, 100);
+                "/paste/1", "desc", PasteStatus.PUBLIC, Language.JAVA, "folder",
+                23L, 234L, "username", LocalDateTime.now(), "share", null, 100);
         paste.setCreatedBy("nadia");
         given(pasteRepository.findByUrl("/paste/1")).willReturn(Optional.of(paste));
-        Feedback feedback=new Feedback();
-        List<Feedback> feedbacks=List.of(feedback);
+        Feedback feedback = new Feedback();
+        List<Feedback> feedbacks = List.of(feedback);
         paste.setFeedback(feedbacks);
         given(feedbackService.getAllFeedbackForPaste(pasteModel.getId())).willReturn(List.of(feedback));
         PasteModel result = pasteService.getPasteForUser("/paste/1", "nadia");

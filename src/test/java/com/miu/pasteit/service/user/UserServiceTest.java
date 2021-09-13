@@ -1,8 +1,7 @@
 package com.miu.pasteit.service.user;
 
 import com.miu.pasteit.component.exception.EntityNotFoundException;
-import com.miu.pasteit.model.entity.activity.sql.ActivityUser;
-import com.miu.pasteit.model.entity.common.ActivityAction;
+import com.miu.pasteit.component.exception.ValidationException;
 import com.miu.pasteit.model.entity.common.Status;
 import com.miu.pasteit.model.entity.db.sql.User;
 import com.miu.pasteit.model.entity.db.sql.UserRoles;
@@ -16,7 +15,6 @@ import com.miu.pasteit.service.role.UserRoleService;
 import com.miu.pasteit.utils.RoleEnum;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -31,6 +29,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+
 /**
  * @author Nadia Mimoun
  */
@@ -55,6 +54,32 @@ public class UserServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void updateUser_shouldReturn_ValidationException_when_emailAlreadyExists() {
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("nadia@gmail.com", "nadia", "mimoun");
+        User user = UserMapper.mapUserUpdateRequest(new User(), userUpdateRequest, "user");
+        given(userRepository.findByEmail("nadia@gmail.com")).willReturn(Optional.of(user));
+        assertThrows(ValidationException.class, () -> userservice.updateUser(123L, userUpdateRequest, "nadia"));
+    }
+
+    @Test
+    public void createUser_shouldReturn_BadRequest_when_emailAlreadyExists() {
+        UserCreateRequest userCreateRequest = UserCreateRequest.of("nadiamimoun", "1hj",
+                "nadia@gmail.com", "nadia", "mimoun");
+        User user = UserMapper.mapUserCreateRequest(userCreateRequest, "user", passwordEncoder.encode(userCreateRequest.getPassword()));
+        given(userRepository.findByEmail("nadia@gmail.com")).willReturn(Optional.of(user));
+        assertThrows(ValidationException.class, () -> userservice.createUser(userCreateRequest, "nadia"));
+    }
+
+    @Test
+    public void createUser_shouldReturn_BadRequest_when_usernameAlreadyExists() {
+        UserCreateRequest userCreateRequest = UserCreateRequest.of("nadiamimoun", "1hj",
+                "nadia@gmail.com", "nadia", "mimoun");
+        User user = UserMapper.mapUserCreateRequest(userCreateRequest, "user", passwordEncoder.encode(userCreateRequest.getPassword()));
+        given(userRepository.findByUsername("nadiamimoun")).willReturn(Optional.of(user));
+        assertThrows(ValidationException.class, () -> userservice.createUser(userCreateRequest, "nadia"));
     }
 
     @Test
@@ -98,9 +123,10 @@ public class UserServiceTest {
         Assertions.assertThat(result.getId()).isEqualTo(245L);
         Assertions.assertThat(result.getEmail()).isEqualTo("nadia@gmail.com");
     }
+
     @Test
-    public void usernotfound() throws Exception{
-        given(userRepository.findByUsername("user")).willThrow( new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found"));
+    public void usernotfound() throws Exception {
+        given(userRepository.findByUsername("user")).willThrow(new EntityNotFoundException(HttpStatus.BAD_REQUEST, "userId", "error.user.not.found"));
         assertThrows(EntityNotFoundException.class, () -> userservice.getUserByUsername("user"));
 
     }
@@ -111,14 +137,15 @@ public class UserServiceTest {
         assertThrows(EntityNotFoundException.class, () -> userservice.getUserByUsername("user"));
 
     }
+
     @Test
-    public void UpdateUser()throws Exception{
+    public void UpdateUser() throws Exception {
         User user = User.of(245L, "user", "111", "nadia@gmail.com",
                 "nadia", "mimoun", Status.ACTIVE, null);
         given(userservice.findById(any())).willReturn(Optional.of(user));
-        UserUpdateRequest userUpdateRequest=new UserUpdateRequest("nadia@gmail.com","nadia","mimoun");
-        given(userRepository.saveAndFlush(UserMapper.mapUserUpdateRequest(user, userUpdateRequest,"user"))).willReturn(user);
-        User result= userservice.updateUser(245L,userUpdateRequest,"user");
+        UserUpdateRequest userUpdateRequest = new UserUpdateRequest("nadia@gmail.com", "nadia", "mimoun");
+        given(userRepository.saveAndFlush(UserMapper.mapUserUpdateRequest(user, userUpdateRequest, "user"))).willReturn(user);
+        User result = userservice.updateUser(245L, userUpdateRequest, "user");
 
         Assertions.assertThat(result.getId()).isEqualTo(245L);
         Assertions.assertThat(result.getEmail()).isEqualTo("nadia@gmail.com");

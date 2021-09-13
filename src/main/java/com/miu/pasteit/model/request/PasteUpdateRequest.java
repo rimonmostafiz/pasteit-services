@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "of")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PasteUpdateRequest {
 
